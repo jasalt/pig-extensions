@@ -1,8 +1,8 @@
 # pig-extensions project plan
 
-Status: **Initial `savelast` Go factory implemented and host-validated. Continue with remaining source-bearing extensions.**
+Status: **`savelast` and `notify-pushover` implemented with real-host offline evidence and atomic commits. Remaining four priority ports and feasibility/combined gates are not complete.**
 
-This workspace contains this plan, an uncommitted local Git repository initialized on `main`, and the initial `extensions/savelast` Go module. It has no commits or remote. No extension is installed globally and no credentials or live external effects were used.
+The workspace now has independent Go modules, project metadata and hermetic tests. See `README.md` and `docs/validation.md` for current evidence. The user subsequently authorized atomic commits; no remote, global installation or live account effects were introduced.
 
 ## 1. Goal and boundaries
 
@@ -219,7 +219,7 @@ Do not implement this extension. Use `pig config` for user-scoped resource filte
 
 Use an independent Go module and importable `Extension() *sdk.Extension` factory per extension. This is PiG's conventional Go source form: PiG generates the runner, and each exact directory can be validated and loaded independently. A `package main` executable, dynamic Go plugin, authored extension manifest, Node package manager, or root Package inventory is unnecessary.
 
-Planned layout; only `plan.md` and Git metadata exist today:
+Target layout (implemented members and evidence are listed in `README.md`):
 
 ```text
 pig-extensions/
@@ -264,7 +264,7 @@ No Pig-owned format version, compatibility reader, automatic migration, or kmet 
 ### Milestone 0 — Record decisions and source contracts
 
 - Record the user's decisions in §8. This is complete, including the `jasalt` namespace, Jarkko Saltiola copyright holder, and notifier transport hardening.
-- Initialize local Git on `main`. This is complete; no remote or commit is created.
+- Initialize local Git on `main`. This is complete; no remote is created. Atomic implementation commits were subsequently authorized.
 - Freeze the original Pi source for each selected candidate and identify the approved differences. Do not treat uncommitted kmet worktree material as the primary reference.
 - Retain original licenses and the user's local-notifier authorization. Do not relabel ISC material as MIT.
 - Target the reviewed PiG checkout and Go SDK. Build a test binary from it before runtime acceptance rather than assuming the installed binary is identical.
@@ -383,9 +383,13 @@ The user also approves retaining kmet's 15-second notifier timeout and redirect 
 - **Pins/imgview rendering and BTW:** qualify existing Go APIs before committing to an implementation route. A blocked route does not authorize a host edit, Node fallback, or reduced behavior by itself.
 - **Linux graphics/browser:** identify the actual terminal and desktop bridge during qualification. Text-only tests cannot establish graphics or desktop success.
 
+### 8.3 Subsequent commit authorization
+
+The user updated the implementation request to **implement `./plan.md` and do atomic commits**. This supersedes the earlier no-commit restriction only; it does not authorize a remote, publication, global installation, live alerts/reset redemption, PiG core changes, Node fallback or reduced feature scope.
+
 ## 9. Immediate next action
 
-Complete the savelast command/error matrix and add the source/provenance notice, then port `notify-pushover`. Keep the source contract and failing regression cases ahead of implementation. Keep BTW conditional and do not build `extension-toggle`. Do not install extensions globally, publish, commit, or create a remote as part of Git initialization.
+Continue with `codex-usage` using the pinned original source, then the pins/imgview feasibility gates. `savelast` now has real command/error and whole-log mutation evidence; `notify-pushover` has local-only command/tool, HTTP and cancellation evidence. Keep interactive reload and packed placement in combined qualification rather than counting RPC restart as their proof. Keep BTW conditional and do not build `extension-toggle`. Do not install globally, publish or create a remote.
 
 ### Main PiG references
 

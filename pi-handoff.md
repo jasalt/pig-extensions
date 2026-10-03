@@ -1,6 +1,48 @@
 # PiG extension port handoff
 
-This document records the current implementation state so work can continue from `../pig-extensions` without reconstructing the earlier review.
+## Current continuation status
+
+The user subsequently authorized **atomic commits** and then disabled Goal mode.
+Continue implementing the full plan normally; no Goal completion/block/wait call
+is appropriate unless Goal mode is explicitly reactivated.
+
+Implemented and committed:
+
+- `59b0431` — initial plan/handoff, project rules and licensing/provenance.
+- `94254a9` — savelast factory plus pure, SDK read-error, real RPC and compiling
+  whole-log mutation tests.
+- `65d3f87` — independent notify-pushover factory, offline HTTP tests, real command
+  and model/tool dispatch, abort/disconnect teardown, notices and user docs.
+- `361bfb2` — savelast ECMAScript whitespace fix: BOM-only warns, NEL is saved.
+
+Authoritative current evidence is `docs/validation.md`; source notices are in
+`docs/provenance.md`. Both modules pass Go 1.27.1 unit/race/vet checks. The default
+Go now reports 1.26.8; use `GOTOOLCHAIN=go1.27.1` for the pinned cached toolchain.
+Python probes are packages: run `python3 -m test.integration.<probe>`, not file
+paths. New helper discovery required `pyrightconfig.json`; fresh Python LSP checks
+are clean. The RPC event waiter supports a `since` marker because settlement can
+arrive before a command response. Do not wait for a duplicate `agent_end`.
+
+No real alerts/provider requests/reset redemption, installation, remote or PiG
+core changes were performed. PiG remains at the target commit with a clean tree.
+Interactive reload and packed placement are still combined-qualification gates;
+RPC process shutdown is not claimed as terminal reload proof.
+
+Next: codex-usage, then rendering feasibility and remaining priority ports.
+Pinned original Codex source and license are still at
+`/tmp/pig-extensions-review.JPGJpX/{pi-codex-usage.ts,codex-LICENSE}`; their hashes
+match the plan. This temporary location may disappear; use the pinned origin and
+verify digests rather than treating the path as permanent project provenance.
+Scheduler startup metadata remains an unresolved gate; do not silently omit it.
+No BTW or extension-toggle implementation has been started.
+
+## Historical initial snapshot
+
+The remainder records the state before the continuation above. Its no-commit,
+untracked-file and missing-test claims are historical, not current instructions
+or acceptance evidence.
+
+This document records the original implementation state so work can continue from `../pig-extensions` without reconstructing the earlier review.
 
 ## Project identity and repository state
 

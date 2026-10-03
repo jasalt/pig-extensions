@@ -83,8 +83,8 @@ source hash `7b11f0fdc928655727db648e65924c305a5ae1e598cd95a26320adae07a1bb87`).
 This separately proves tool/command identity and an effect-free constructor,
 not runtime acceptance by itself.
 
-Fresh active LSP checks are clean for the Python integration files (explicit
-`pyrightconfig.json` refreshes discovery of newly-created helpers). Go unit,
+Fresh active LSP checks are clean across 15 changed Go/Python files (explicit
+`pyrightconfig.json` refreshes discovery of newly-created Python helpers). Go unit,
 race and vet checks provide additional compiler/runtime evidence. Reload in
 an interactive terminal and packed placement still belong to combined qualification;
 these are not claimed from process restart or RPC-only tests.
