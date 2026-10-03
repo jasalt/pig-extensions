@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	"unicode"
 
 	sdk "github.com/MichaelKinsy/PiG/extensions/sdk"
 )
@@ -35,7 +36,7 @@ func Extension() *sdk.Extension {
 			ctx.Notify("No agent message found to save", "warning")
 			return nil
 		}
-		if strings.TrimSpace(text) == "" {
+		if trim(text) == "" {
 			ctx.Notify("Last agent message has no text content to save", "warning")
 			return nil
 		}
@@ -97,8 +98,15 @@ func extractTextContent(content any) string {
 	}
 }
 
+// trim matches modern ECMAScript String.trim: BOM is whitespace, NEL is not.
+func trim(text string) string {
+	return strings.TrimFunc(text, func(r rune) bool {
+		return unicode.Is(unicode.Zs, r) || strings.ContainsRune("\t\n\v\f\r\u2028\u2029\uFEFF", r)
+	})
+}
+
 func resolveTarget(cwd, args string, now time.Time) string {
-	trimmed := strings.TrimSpace(args)
+	trimmed := trim(args)
 	if trimmed == "" {
 		trimmed = fmt.Sprintf("%d.md", now.UnixMilli())
 	}

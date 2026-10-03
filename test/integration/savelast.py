@@ -74,6 +74,16 @@ def run():
             _, rows = rpc.call("prompt", message="/savelast textless.md")
             notification(rows, "Last agent message has no text content to save", "warning")
             assert not (cwd / "textless.md").exists()
+        for label, content in [("bom", "\ufeff"), ("nel", "\u0085")]:
+            seed(session, cwd, [assistant(label, None, [{"type": "text", "text": content}])])
+            with RPC(cwd, [EXT], session) as rpc:
+                _, rows = rpc.call("prompt", message="/savelast " + label + ".md")
+                if label == "bom":
+                    notification(rows, "Last agent message has no text content to save", "warning")
+                    assert not (cwd / "bom.md").exists()
+                else:
+                    notification(rows, "Saved to: " + str(cwd / "nel.md"), "info")
+                    assert (cwd / "nel.md").read_bytes() == content.encode()
         with RPC(cwd, [EXT]) as rpc:
             _, rows = rpc.call("prompt", message="/savelast ephemeral.md")
             notification(rows, "No agent message found to save", "warning")

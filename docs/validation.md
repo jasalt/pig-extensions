@@ -19,6 +19,9 @@ Pure tests encode original block extraction/byte preservation, normalization,
 parent creation, overwrite, latest-textless and missing-content behavior.
 The missing-content case matches original JavaScript undefined, whereas null
 is a present textless content. Error/aborted assistant text is not filtered.
+ECMAScript whitespace (including BOM but excluding NEL) matches the original;
+real RPC proves a BOM-only response warns while a NEL response is saved exactly.
+Pinned Go 1.27.1 unit/race/vet checks also pass.
 
 Real RPC verifies exact active-branch bytes with a newer abandoned assistant
 in the full log; default/blank, relative/absolute, spaces/Unicode, overwrite,
@@ -37,7 +40,7 @@ in production PiG. `SessionManager.GetBranch(nil)` uses the host's `sessionRead`
 method, not the convenience mirror's `watchSessionLog` subscription.
 
 Registration validation passed (`valid: true`, `registered: true`, Go factory,
-source hash `81bd5d48214d96c53b001f65942308a41e3c1e6e421bdd12b9fbb0da427da1fe`).
+source hash `041ba01f0ddbe782b9d176bca8f8404a76f9bb406b4d115abd887cd99b238fd4`).
 It is a separate gate and does not prove functionality.
 No global installation or remote publication was performed.
 
