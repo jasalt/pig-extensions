@@ -1,0 +1,192 @@
+# PiG extension port handoff
+
+This document records the current implementation state so work can continue from `../pig-extensions` without reconstructing the earlier review.
+
+## Project identity and repository state
+
+- Project path: `/home/user/dev/jail/pig-extensions`.
+- Run project commands from this directory, or use the explicit paths below.
+- Git was initialized with initial branch `main`.
+- The repository has no commits and no remote.
+- Current project status is intentionally uncommitted:
+  - `plan.md` is untracked.
+  - `pi-handoff.md` is untracked.
+  - `extensions/savelast/` is untracked.
+- Do not create a remote, commit, install extensions globally, or publish without a separate request.
+- Repository/module namespace: `github.com/jasalt/pig-extensions`.
+- Copyright holder for new work: Jarkko Saltiola.
+- New project work is MIT. Preserve every third-party license and attribution instead of replacing it with the project license.
+
+The sibling PiG checkout is `/home/user/dev/jail/PiG` at commit `0e6ed0048282a15531ea1652a5833de4da4dd1a7`. Its working tree was clean after the build. The qualified build toolchain is Go `1.27.1`; the module language floor is Go `1.26`. Node is not on `PATH`, and the selected production design is Go-only.
+
+## User-ratified scope
+
+1. Prioritize the six candidates with source: `savelast`, `nofity-pushover` ported as `notify-pushover`, `codex-usage`, `pins`, `imgview`, and `schedule`.
+2. Prefer Go for every extension. Do not introduce a Node runtime dependency unless a later decision changes this.
+3. Use the original Pi extensions as the main behavioral reference. Use kmet as a secondary implementation and regression reference. The kmet `pins` presentation is the preferred visual style.
+4. Target the current PiG checkout, not a published binary. Do not change PiG core without separate approval.
+5. Use independent Go factories, each selected from an exact extension root. Do not make an umbrella Package or Piglet a prerequisite.
+6. Qualify Linux first. Do not claim other platforms, desktop/browser bridges, terminals, or fused Binary delivery without evidence.
+7. `savelast` reads the latest assistant response on the active branch. It must not select an abandoned branch.
+8. Codex usage uses native PiG notifications and retains immediate reset redemption. Never redeem a real account in tests.
+9. The extension directory is `notify-pushover`. Keep tool `notify_human` and command `/notify-human-test`. Use PiG-specific `PIG_PUSHOVER_USER_KEY`, `PIG_PUSHOVER_APP_TOKEN`, `PIG_PUSHOVER_DEVICE`, and a PiG agent-directory-scoped JSON file. Do not accept legacy environment aliases or migrate old credentials.
+10. `imgview` uses native PiG image capabilities and retains its warning-only image threshold and browser-viewer behavior, subject to real transport limits.
+11. `schedule` follows original pi-schedule v0.4.0 scope. Its implementation injects prompts into the current Session; it does not create a history-free child Session. Preserve all original kinds, actions, trust behavior, privilege policy, relaxed options, and reliability controls.
+12. Preserve scheduler policy, including project trust, explicit `run_now` bypass, strict read-only default, `suggest`, and opt-in legacy mode. Do not add a confirmation gate without approval.
+13. BTW is conditional only after the six source-bearing ports. Target original pi-btw v0.7.1, prefer Go, and do not implement child-extension allowlists or ambient child extension loading. Defer it if child-session/provider/UI substrate is not practical.
+14. Do not implement `extension-toggle`; document and use `pig config` and `pig config --local`.
+15. Use fresh PiG JSON/JSONL state with no kmet import or compatibility reader. The local notifier source is authorized for adaptation. Retain kmet's 15-second notifier timeout and redirect refusal.
+
+The full decision record, source provenance, feasibility gates, milestone sequence, and acceptance matrix are in `plan.md`.
+
+## Current implementation: `extensions/savelast`
+
+Files:
+
+- `extensions/savelast/extension.go`
+- `extensions/savelast/core_test.go`
+- `extensions/savelast/go.mod`
+- `extensions/savelast/go.sum`
+- `extensions/savelast/README.md`
+
+Module identity:
+
+```text
+github.com/jasalt/pig-extensions/extensions/savelast
+```
+
+SDK dependency:
+
+```text
+github.com/MichaelKinsy/PiG/extensions/sdk v0.3.1
+```
+
+Factory:
+
+```go
+func Extension() *sdk.Extension
+```
+
+Registered capability:
+
+```text
+/savelast [path]
+```
+
+The factory does the following:
+
+- Calls `ctx.SessionManager().GetBranch(nil)` for the active branch.
+- Walks entries backward and selects the latest nested assistant message.
+- Treats a latest assistant message with no usable text as textless; it warns and never falls back to an older response.
+- Preserves string content exactly.
+- For array content, joins only blocks whose `type` is `text` and whose `text` is a string, using a single newline between accepted blocks. Thinking, tool-call, image, malformed, nil, and non-string blocks are skipped.
+- Resolves a nonblank argument against `ctx.Cwd()` with normalized paths.
+- Uses `<Unix milliseconds>.md` under `ctx.Cwd()` when the argument is blank.
+- Creates parent directories, writes UTF-8 bytes without adding a final newline, and overwrites an existing file without confirmation.
+- Emits PiG notifications for no assistant, textless assistant, read failure, write failure, and success. It returns nil after reporting command failures, matching the original command’s user-facing error handling rather than producing a second generic command error.
+- Performs no network operation, browser launch, scheduler start, credential read, or account mutation during construction or registration.
+
+The implementation is adapted from `atomdmac/pi-savelast` at commit `efb580c1e7f95e230c2c413021b6680abfa287c7`. Its package metadata declares ISC, not MIT. The original reference checkout is `../kmet/target/reference/pi-savelast`; preserve that third-party licensing/attribution in the eventual provenance/license files. Do not assume its `GetEntries()` behavior for PiG: the user explicitly selected active-branch behavior.
+
+## Evidence completed
+
+From the PiG checkout:
+
+```sh
+go build -o bin/pig ./cmd/pig
+./bin/pig --version
+# 0.3.1+0.87.1
+```
+
+From the extension module:
+
+```sh
+cd ../pig-extensions/extensions/savelast
+go test ./...
+go test -race ./...
+go vet ./...
+```
+
+All three commands pass after the implementation was added.
+
+Validation with an isolated PiG home:
+
+```sh
+cd ../PiG
+home=$(mktemp -d)
+PIG_HOME="$home" ./bin/pig install --validate-only --json ../pig-extensions/extensions/savelast
+```
+
+The result was `valid: true`, `registered: true`, factory `Extension`, language `go`, package `github.com/jasalt/pig-extensions/extensions/savelast`, and runtime `subprocess`/`packable: true`. The reported source hash was `54b1e83f28b70a7e0648e88646c91dc1eb6cc88c4cf356ae37ac9fbf95ea8820`.
+
+A real RPC host probe also passed. It used a temporary Session file with an abandoned assistant branch and a different active assistant branch. The driver waited for the `get_commands` response before sending the extension command, then waited for the `/savelast` response before closing stdin. The command wrote exactly `ACTIVE RESPONSE`, not `ABANDONED RESPONSE`, and emitted:
+
+```text
+Saved to: <temporary-project>/output.md
+```
+
+The command protocol is asynchronous. A single shell pipe that sends a command and immediately closes stdin can close RPC before the extension command is admitted. Do not treat that race as a product failure; use a driver that waits for command admission/response.
+
+The first attempted RPC probe used unavailable model `test-faux/echo` and failed before extension execution with `Model "test-faux/echo" not found`. Offline `--list-models` also reported no configured models in a fresh home. Extension commands can be tested without selecting a model by using RPC mode with no `--model`, as in the successful probe.
+
+## Test coverage currently present
+
+`core_test.go` covers:
+
+- latest assistant selection;
+- only valid text blocks;
+- preservation of exact string content, Unicode, tabs, CRLF, and trailing spaces;
+- no fallback when the latest assistant is textless;
+- absent assistant messages;
+- relative and absolute path normalization;
+- epoch-millisecond default names;
+- parent directory creation;
+- no added newline;
+- overwrite behavior.
+
+Still required for the complete savelast acceptance matrix:
+
+- command-level no-assistant and textless notifications through real RPC;
+- command-level read/subscription failure notification;
+- mkdir/write failures through real RPC;
+- blank/default arguments through real RPC;
+- paths with spaces and Unicode through real RPC;
+- fresh Session/replacement behavior;
+- poisoned assistant/error/aborted messages and exact source behavior for those shapes;
+- a compiling mutation proving the active-branch scenario fails if `GetEntries()` or an older assistant fallback is substituted;
+- final source/provenance notice and license inventory.
+
+Do not weaken comparisons or turn the host test into registration-only evidence.
+
+## Important environment/test notes
+
+- `go test ./...` was accidentally run from the PiG root while setting up the task. It is not a valid extension test. It hit pre-existing environment/toolchain limitations: missing `extensions/sdk-ts/node_modules`, missing Node differential probes, and a temporary disk-quota failure during the broad build. Do not rerun the full PiG suite for this extension until the required toolchain and Node dependencies are approved/available.
+- PiG’s source working tree remained clean. The build output `bin/pig` is ignored or otherwise not a tracked change.
+- Do not touch the modified/untracked files in `../kmet-extensions`; the kmet checkout changed after the initial review and is not the authoritative source.
+- Use temporary homes, session files, project directories, and stores. Do not write into checked-in fixture roots.
+
+## Recommended next steps
+
+1. Add the root MIT `LICENSE` naming Jarkko Saltiola, plus a provenance/third-party notice file that preserves the ISC savelast metadata and all later upstream notices. Do not incorrectly relicense third-party code.
+2. Add a real RPC test driver or a PiG-side integration test fixture for `savelast` boundary cases. Keep the driver synchronized by waiting for `get_commands` and the command response.
+3. Complete savelast’s command/error matrix and run the active-branch mutation proof.
+4. Port `notify-pushover` as an independent module at `extensions/notify-pushover`. Preserve the local Pi tool/command contract, switch to `PIG_PUSHOVER_*`, use the selected PiG agent directory, and retain a 15-second HTTP timeout plus redirect refusal. Keep tests offline with a local HTTP server/client seam; never send a real alert during normal tests.
+5. Port `codex-usage`, then qualify Go rendering feasibility before `pins` and `imgview`. Keep native status/notification and image behavior explicit.
+6. Port scheduler pure logic before runner/lifecycle. First resolve the supported parent-host initial-prompt metadata path; do not use `/proc`, infer from empty history, or silently omit startup suppression.
+7. Defer BTW until a written Go child-session/provider/UI feasibility design passes review. Do not implement `extension-toggle`.
+
+## Useful commands from this directory
+
+```sh
+cd /home/user/dev/jail/pig-extensions/extensions/savelast
+go test ./...
+go test -race ./...
+go vet ./...
+
+cd /home/user/dev/jail/PiG
+go build -o bin/pig ./cmd/pig
+home=$(mktemp -d)
+PIG_HOME="$home" ./bin/pig install --validate-only --json ../pig-extensions/extensions/savelast
+```
+
+The canonical plan is `plan.md`. This handoff is an implementation snapshot, not a replacement for that plan or for the PiG repository instructions.
