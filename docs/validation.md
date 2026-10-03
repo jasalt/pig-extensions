@@ -89,9 +89,50 @@ race and vet checks provide additional compiler/runtime evidence. Reload in
 an interactive terminal and packed placement still belong to combined qualification;
 these are not claimed from process restart or RPC-only tests.
 
+## codex-usage — qualification in progress
+
+Passed:
+
+```sh
+(cd extensions/codex-usage && GOTOOLCHAIN=go1.27.1 go test ./... && GOTOOLCHAIN=go1.27.1 go test -race ./... && GOTOOLCHAIN=go1.27.1 go vet ./...)
+python3 -m test.integration.codex_usage
+```
+
+Original-source cases are encoded for finite window validation, weekly tolerance,
+clamping, primary/weekly identity, twenty-cell bars and exact percentage rounding,
+local reset times/DST/time clipping, expiry ordering, UTC credit timestamps,
+accepted reset acknowledgements and exact reset-ID parsing. Kmet's current
+regression cases were consulted (checkout `ab36bf230cbec7119177bba717e511dd9b4c0ccc`),
+not treated as authority for its different notification or Pi identity behavior.
+
+HTTP seams/real local servers prove adapter paths/auth/header merging, native JWT
+claims/WHAM paths and unique v4 redemption IDs, accepted/error/malformed results,
+credential redaction, cross-origin header stripping and cancellation without
+retrying a possibly accepted reset. Native HTTP seams are **not native OAuth
+caller-path evidence**. Lifecycle tests prove overlapping refresh suppression,
+epoch replacement, pending-metadata races, shutdown joins, timer teardown,
+normal-handler versus runtime lifetimes, silent automatic failures and immediate
+reset followed by refresh. Malformed truthy reset results cannot become success.
+
+Real PiG RPC uses a local adapter and hermetic model. Exact repeated cards,
+expiry-sorted list output, reset POST JSON/headers, invalid-ID no-send, session start,
+model selection and real-agent settlement refreshes pass. Notifications are not
+persisted custom messages. A fresh PiG RPC home exposes an `unknown/unknown`
+placeholder, so its exact diagnostic is missing authentication for `unknown`;
+a genuinely absent model is separately covered at the owner boundary. The
+settlement test waits for the specific usage GET with a deadline because
+`agent_end`/command responses are not settlement barriers. No account mutation
+or real provider/WHAM request was made.
+
+Factory registration validation passes independently, with both commands and all
+four lifecycle handlers. Native OAuth real-host, adversarial real-host HTTP/model
+replacement/abort/disconnect, interactive reload and combined placement are still
+required; this partial evidence does not accept the full Codex matrix.
+
 ## Remaining scope
 
-The remaining four priority ports, rendering feasibility, scheduler metadata/policy
+Codex's remaining caller gates and the other three priority ports, rendering
+feasibility, scheduler metadata/policy
 qualification, combined placement/lifetime tests and conditional BTW assessment
 remain unaccepted. Text-only terminal tests will not be presented as real graphics
 or desktop-opener proof. See `plan.md` for the full remaining acceptance matrix.

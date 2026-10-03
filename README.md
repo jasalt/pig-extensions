@@ -11,7 +11,7 @@ This collection is **in progress**, not the completed six-extension port.
 | --- | --- |
 | [savelast](extensions/savelast/README.md) | Implemented; unit, SDK error-boundary and real RPC/mutation tests |
 | [notify-pushover](extensions/notify-pushover/README.md) | Implemented; offline HTTP, real command/tool and cancellation tests |
-| codex-usage | Not yet implemented |
+| [codex-usage](extensions/codex-usage/README.md) | Factory/core/HTTP/lifecycle implemented; real adapter tests pass; native/cancellation caller qualification ongoing |
 | pins | Go rendering feasibility and implementation pending |
 | imgview | Native rendering/desktop feasibility and implementation pending |
 | schedule | Pure logic and host startup/policy feasibility pending |

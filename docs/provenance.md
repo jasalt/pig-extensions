@@ -46,5 +46,23 @@ refusal. Error hardening also redacts form-encoded secrets and diagnostic conten
 owned sends cancel/join on shutdown. Original tool/command names, credential
 precedence/cache lifecycle, form limits and one-way-only behavior are retained.
 
+## codex-usage (qualification in progress)
+
+Adapted from `jasalt/chatgpt-openai-api-adapter`, commit
+`94f45568b4bd7842b1aef362cc3ba883b1312951`, `contrib/pi-codex-usage.ts`.
+Source SHA-256: `9e6bf72c5e050b51d7825a667a351062afe6b81bb737507a9f4175e181cea3b7`.
+MIT, copyright 2026 Jarkko Saltiola. Original license retained verbatim at
+`extensions/codex-usage/LICENSE`, SHA-256
+`b4e8cd39baa974c8d693b5f8c7078ace3a481172f539e0e42a57075d675911e7`.
+No Node runtime or machine-local SDK replacement is introduced.
+
+Differences: PiG's resolved model-auth/headers facade rather than Pi's provider
+object; PiG D26 `originator: pig`; approved native notifications; owned HTTP/ticker
+cancellation and stale-generation suppression. Security hardening scrubs raw and
+encoded credentials from returned/displayed data and clears authentication headers
+on cross-origin redirects. Reset redemption remains immediate, without confirmation
+or automatic retry. Formatting currently qualified for en_US/en_GB, local timezone
+and DST boundaries; no blanket locale parity is asserted.
+
 This inventory covers implemented modules only. The prospective source inventory
 in `plan.md` is not license clearance for unimplemented ports.
