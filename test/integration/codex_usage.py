@@ -4,17 +4,12 @@ from pathlib import Path
 import tempfile
 
 from .codex_adapter import CodexAdapter
+from .codex_cases import status_card
 from .rpc import ROOT, RPC
 from .savelast import notification
 
 EXT = ROOT / "extensions/codex-usage"
-CARD = "\n".join([
-    "ChatGPT Codex status",
-    "Visit https://chatgpt.com/codex/settings/usage for up-to-date information on rate limits and credits.",
-    "Account:       fixture@example.org (Plus)",
-    "5h limit:      [███████████████░░░░░] 76.5% left (resets 22:13)",
-    "Weekly limit: [░░░░░░░░░░░░░░░░░░░░] 0% left (resets 17:06 on Nov 20)",
-])
+CARD = status_card("fixture@example.org", "Plus")
 
 with tempfile.TemporaryDirectory(prefix="codex-adapter-proof-") as temp, CodexAdapter() as adapter:
     cwd = Path(temp)

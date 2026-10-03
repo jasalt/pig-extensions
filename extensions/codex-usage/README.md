@@ -3,10 +3,10 @@
 Independent Go factory for PiG, adapted from the pinned original Pi extension.
 Provides `/codex-usage` and `/codex-reset [reset-id]`.
 
-**Implementation qualification is in progress.** Pure/HTTP/lifecycle tests and
-real PiG adapter command paths pass. Native OAuth caller-path, adversarial real-host
-replacement/reload and combined placement evidence still need qualification;
-unit tests alone are not acceptance of those paths.
+**Implemented with offline caller evidence.** Pure/HTTP/lifecycle tests, real PiG
+adapter commands, native OAuth/WHAM commands and real-host HTTP/model/session
+replacement/disconnect tests pass. Interactive reload and packed placement remain
+combined-qualification gates, not claims made from unit tests or process restart.
 
 ## Behavior
 
@@ -58,11 +58,17 @@ error. An actually absent model yields `No model selected`.
 (cd extensions/codex-usage && GOTOOLCHAIN=go1.27.1 go test -race ./...)
 (cd extensions/codex-usage && GOTOOLCHAIN=go1.27.1 go vet ./...)
 python3 -m test.integration.codex_usage
+python3 -m test.integration.codex_native
+python3 -m test.integration.codex_lifetime
 ```
 
-Integration requires Python 3 and the test PiG binary (`PIG_BIN`, default
-`../PiG/bin/pig`), a temporary selected agent directory, dummy credentials and a
-local HTTP adapter/provider. It never contacts a live account. Settlement follows
+Integration requires Python 3, OpenSSL and the test PiG binary (`PIG_BIN`, default
+`../PiG/bin/pig`), a temporary selected agent directory, dummy credentials, a local
+HTTP adapter/provider and private local TLS interception for the fixed WHAM
+endpoints. The host reads only seeded dummy OAuth credentials; the extension reads
+none of those files. It never contacts a live account. Shared-directory mode is
+disabled and both PiG/Pi agent directory overrides are pinned to the fixture.
+Settlement follows
 `agent_end` asynchronously; the test waits for the specific usage request instead
 of assuming a command response is a settlement barrier.
 

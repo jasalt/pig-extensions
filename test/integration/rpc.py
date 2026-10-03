@@ -18,7 +18,8 @@ class RPC:
         self.errors = []
         env = dict(os.environ, PIG_HOME=str(directory / "home"),
                    PIG_CODING_AGENT_DIR=str(directory / "agent"),
-                   PI_OFFLINE="1", PI_SKIP_VERSION_CHECK="1")
+                   PI_CODING_AGENT_DIR=str(directory / "agent"), PIG_USE_PI_DIRS="0",
+                   PIG_OFFLINE="1", PI_OFFLINE="1", PI_SKIP_VERSION_CHECK="1")
         # Do not inherit provider credentials into functional tests.
         for key in list(env):
             if key.endswith(("API_KEY", "ACCESS_TOKEN")) or "PUSHOVER" in key:
@@ -58,12 +59,23 @@ class RPC:
         assert self.proc.stderr is not None
         self.errors.extend(self.proc.stderr)
 
-    def call(self, kind, **fields):
+    def send(self, kind, **fields):
+        """Queue one command; useful for deliberately held HTTP operations."""
         self.seq += 1
         identifier = str(self.seq)
         assert self.proc.stdin is not None
         self.proc.stdin.write(json.dumps(dict(type=kind, id=identifier, **fields)) + "\n")
         self.proc.stdin.flush()
+        return identifier
+
+    def call(self, kind, **fields):
+        return self.wait_response(self.send(kind, **fields))
+
+    def wait_response(self, identifier):
+        for row in self.events:
+            if row.get("type") == "response" and row.get("id") == identifier:
+                assert row.get("success"), row
+                return row, [row]
         seen = []
         while True:
             try:
@@ -107,6 +119,13 @@ class RPC:
             self.proc.wait()
         for thread in self.threads:
             thread.join(timeout=2)
+        # Preserve every final frame, including shutdown notifications, so
+        # credential/stale-output checks do not ignore buffered stdout.
+        while True:
+            try:
+                self.events.append(self.lines.get_nowait())
+            except queue.Empty:
+                break
         self.proc.stdout.close()
         self.proc.stderr.close()
 

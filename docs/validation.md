@@ -89,13 +89,15 @@ race and vet checks provide additional compiler/runtime evidence. Reload in
 an interactive terminal and packed placement still belong to combined qualification;
 these are not claimed from process restart or RPC-only tests.
 
-## codex-usage — qualification in progress
+## codex-usage — offline command/lifecycle caller evidence
 
 Passed:
 
 ```sh
 (cd extensions/codex-usage && GOTOOLCHAIN=go1.27.1 go test ./... && GOTOOLCHAIN=go1.27.1 go test -race ./... && GOTOOLCHAIN=go1.27.1 go vet ./...)
 python3 -m test.integration.codex_usage
+python3 -m test.integration.codex_native
+python3 -m test.integration.codex_lifetime
 ```
 
 Original-source cases are encoded for finite window validation, weekly tolerance,
@@ -108,8 +110,9 @@ not treated as authority for its different notification or Pi identity behavior.
 HTTP seams/real local servers prove adapter paths/auth/header merging, native JWT
 claims/WHAM paths and unique v4 redemption IDs, accepted/error/malformed results,
 credential redaction, cross-origin header stripping and cancellation without
-retrying a possibly accepted reset. Native HTTP seams are **not native OAuth
-caller-path evidence**. Lifecycle tests prove overlapping refresh suppression,
+retrying a possibly accepted reset. Those native HTTP seams are not themselves
+native OAuth caller-path evidence; that separate proof is described below.
+Lifecycle tests prove overlapping refresh suppression,
 epoch replacement, pending-metadata races, shutdown joins, timer teardown,
 normal-handler versus runtime lifetimes, silent automatic failures and immediate
 reset followed by refresh. Malformed truthy reset results cannot become success.
@@ -124,14 +127,33 @@ settlement test waits for the specific usage GET with a deadline because
 `agent_end`/command responses are not settlement barriers. No account mutation
 or real provider/WHAM request was made.
 
-Factory registration validation passes independently, with both commands and all
-four lifecycle handlers. Native OAuth real-host, adversarial real-host HTTP/model
-replacement/abort/disconnect, interactive reload and combined placement are still
-required; this partial evidence does not accept the full Codex matrix.
+Native real-host proof seeds an isolated PiG OAuth store with an unexpired dummy
+JWT and lets PiG resolve it. Production fixed WHAM endpoints are intercepted by a
+private local TLS proxy. Account/plan claims override server account data; headers
+include the exact resolved bearer token, account ID and PiG originator. All four
+accepted results plus empty-object acknowledgement pass, with unique v4 UUIDs in
+native redemption bodies. Unexpected results neither retry nor refresh. No real
+OAuth/login or credit mutation is performed.
+
+Held-response real-host tests verify model selection, new-session replacement and
+disconnect close obsolete HTTP sockets within five seconds, suppress old notices
+and footer status, and leave replacement epochs usable. Buffered shutdown RPC
+frames are retained for credential/stale-output checks rather than discarded.
+The harness forces PiG directory mode, both agent overrides and offline catalogs;
+ambient shared-mode settings cannot redirect test credential reads to live Pi
+state. TLS seams are shared only now that both Pushover and Codex need them.
+
+Factory registration validation passes independently (`valid: true`,
+`registered: true`, source hash
+`53b0eb00661ef252ce478d845ec390ada63999f533eafeef2cf3865fcb425d3b`),
+with both commands and all four lifecycle handlers. Interactive reload and
+combined placement remain required; no full combined/terminal acceptance is
+claimed from these RPC proofs. Fresh active LSP checks are clean for the eight
+changed/shared Python caller fixtures.
 
 ## Remaining scope
 
-Codex's remaining caller gates and the other three priority ports, rendering
+Codex's combined/terminal gates and the other three priority ports, rendering
 feasibility, scheduler metadata/policy
 qualification, combined placement/lifetime tests and conditional BTW assessment
 remain unaccepted. Text-only terminal tests will not be presented as real graphics
