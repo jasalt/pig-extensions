@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "pigext",
+  "project_id": "4971b1cf-ea67-42fe-ae24-ee456114547a"
+}
