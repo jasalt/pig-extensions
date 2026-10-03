@@ -1,9 +1,9 @@
-"""Real command-path savelast acceptance. Run: python3 test/integration/savelast.py."""
+"""Real command-path savelast acceptance. Run: python3 -m test.integration.savelast."""
 import os
 from pathlib import Path
 import tempfile
 
-from rpc import ROOT, RPC, assistant, seed
+from test.integration.rpc import ROOT, RPC, assistant, seed
 
 EXT = Path(os.environ.get("SAVELAST_ROOT", ROOT / "extensions/savelast")).resolve()
 

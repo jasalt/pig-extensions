@@ -11,7 +11,7 @@ BIN = Path(os.environ.get("PIG_BIN", ROOT.parent / "PiG/bin/pig")).resolve()
 
 
 class RPC:
-    def __init__(self, directory, extensions, session=None):
+    def __init__(self, directory, extensions, session=None, extra_env=None, model=None):
         directory = Path(directory)
         self.events = []
         self.lines = queue.Queue()
@@ -23,8 +23,12 @@ class RPC:
         for key in list(env):
             if key.endswith(("API_KEY", "ACCESS_TOKEN")) or "PUSHOVER" in key:
                 del env[key]
+        if extra_env:
+            env.update(extra_env)
         args = [str(BIN), "--mode", "rpc", "--no-extensions", "--no-skills",
                 "--no-prompt-templates", "--no-context-files", "--no-themes"]
+        if model:
+            args += ["--model", model]
         if session:
             args += ["--session", str(session)]
         else:
@@ -72,6 +76,23 @@ class RPC:
                 raise AssertionError(f"RPC exited: {seen!r}; stderr={self.errors!r}")
             if row.get("type") == "response" and row.get("id") == identifier:
                 assert row.get("success"), row
+                return row, seen
+
+    def wait_event(self, kind, since=None):
+        seen = [] if since is None else self.events[since:]
+        for row in seen:
+            if row.get("type") == kind:
+                return row, seen
+        while True:
+            try:
+                row = self.lines.get(timeout=30)
+            except queue.Empty:
+                raise AssertionError(f"event timeout: {kind}; {seen!r}; stderr={self.errors!r}")
+            seen.append(row)
+            self.events.append(row)
+            if row.get("eof"):
+                raise AssertionError(f"RPC exited: {seen!r}; stderr={self.errors!r}")
+            if row.get("type") == kind:
                 return row, seen
 
     def close(self):

@@ -1,0 +1,51 @@
+# pig-extensions
+
+Independent, optional Go extensions for PiG. Target checkout:
+`0e6ed0048282a15531ea1652a5833de4da4dd1a7` (PiG `0.3.1+0.87.1`), Linux.
+Namespace: `github.com/jasalt/pig-extensions`. New work is MIT;
+[third-party notices](docs/provenance.md) remain applicable.
+
+This collection is **in progress**, not the completed six-extension port.
+
+| Extension | Current state |
+| --- | --- |
+| [savelast](extensions/savelast/README.md) | Implemented; unit, SDK error-boundary and real RPC/mutation tests |
+| [notify-pushover](extensions/notify-pushover/README.md) | Implemented; offline HTTP, real command/tool and cancellation tests |
+| codex-usage | Not yet implemented |
+| pins | Go rendering feasibility and implementation pending |
+| imgview | Native rendering/desktop feasibility and implementation pending |
+| schedule | Pure logic and host startup/policy feasibility pending |
+| btw | Conditional Go feasibility review after the six priority ports |
+
+## Select exactly what you need
+
+Each `extensions/<name>` is an independent importable Go factory/module, using
+SDK v0.3.1 and Go floor 1.26. The repository root is not an extension bundle.
+There is no mandatory umbrella Package, Node runtime, or Piglet.
+
+```sh
+# One-off source-root load, with ambient extensions disabled:
+pig --no-extensions -e /absolute/path/to/pig-extensions/extensions/savelast
+
+# Build/register only, without installing:
+pig install --validate-only --json ./extensions/savelast
+```
+
+Validation can execute constructors; these constructors do not send notifications,
+launch browsers, mutate credentials, or schedule work. No global installation,
+remote publication or PiG core changes are made by the project tests.
+For installed resource selection use **`pig config`** or **`pig config --local`**;
+there is deliberately no `extension-toggle` port or new settings plane.
+
+## Verification
+
+[Validation evidence](docs/validation.md) records exact scope and known remaining
+work. Tests isolate agent/home/project/session state and use dummy credentials.
+Pushover integration uses a local TLS proxy and a hermetic model, not live delivery.
+Never use normal tests as approval for real alerts, reset redemption or other
+account mutations. Desktop/terminal-graphics success is not implied by text tests.
+
+The complete contract is [plan.md](plan.md). `pi-handoff.md` is the initial
+historical snapshot; consult current files and validation evidence before relying
+on it. Changes are committed atomically as subsequently authorized by the user;
+no remote is created or publication performed.

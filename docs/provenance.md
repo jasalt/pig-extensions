@@ -31,5 +31,20 @@ Approved differences: active-branch reads instead of whole-log reads;
 Go/PiG SDK implementation and explicit session-read diagnostics.
 No changes to overwrite, whitespace, block joining or latest-message fallback.
 
+## notify-pushover
+
+Adapted from user-authorized local Pi `pushover-human/index.ts` at
+`../lima-default/home-manager/pi/agent/extensions/pushover-human/index.ts`.
+SHA-256: `28fdb9c1914c67b08c89fc0cb0c4e06d657db90f7a403f340394f71a5a991a1f`.
+No published version or standalone license is asserted for that local file;
+user authorization and the selected MIT project licensing govern this adaptation.
+New Go code: copyright 2026 Jarkko Saltiola, root MIT license. No kmet code copied.
+
+Approved differences: corrected directory/name; PiG titles and `PIG_PUSHOVER_*`;
+selected-agent-directory `notify-pushover.json`; 15-second timeout and redirect
+refusal. Error hardening also redacts form-encoded secrets and diagnostic content;
+owned sends cancel/join on shutdown. Original tool/command names, credential
+precedence/cache lifecycle, form limits and one-way-only behavior are retained.
+
 This inventory covers implemented modules only. The prospective source inventory
 in `plan.md` is not license clearance for unimplemented ports.
