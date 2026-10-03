@@ -2,9 +2,9 @@
 
 ## Current continuation status
 
-The user subsequently authorized **atomic commits** and then disabled Goal mode.
-Continue implementing the full plan normally; no Goal completion/block/wait call
-is appropriate unless Goal mode is explicitly reactivated.
+The user authorized **atomic commits**. Continue the full plan; Goal-mode state and
+tool authority come only from the latest live conversation contract, never from
+this handoff. The current objective includes Codex and the unfinished extensions.
 
 Implemented and committed:
 
@@ -14,26 +14,53 @@ Implemented and committed:
 - `65d3f87` — independent notify-pushover factory, offline HTTP tests, real command
   and model/tool dispatch, abort/disconnect teardown, notices and user docs.
 - `361bfb2` — savelast ECMAScript whitespace fix: BOM-only warns, NEL is saved.
+- `d8e652c` — Codex factory, parsing/presentation, HTTP/reset and lifetime owner,
+  unit/race tests and real adapter/settlement command evidence.
+- `1f57fc5` — concrete scheduler metadata approval gate and rendering probe notes.
+- `5991fd9` — real native OAuth/WHAM caller and model/session/disconnect proofs;
+  shared private TLS fixture, isolation hardening and buffered shutdown evidence.
 
 Authoritative current evidence is `docs/validation.md`; source notices are in
-`docs/provenance.md`. Both modules pass Go 1.27.1 unit/race/vet checks. The default
+`docs/provenance.md`. All three modules pass Go 1.27.1 unit/race/vet checks. The default
 Go now reports 1.26.8; use `GOTOOLCHAIN=go1.27.1` for the pinned cached toolchain.
 Python probes are packages: run `python3 -m test.integration.<probe>`, not file
 paths. New helper discovery required `pyrightconfig.json`; fresh Python LSP checks
 are clean. The RPC event waiter supports a `since` marker because settlement can
 arrive before a command response. Do not wait for a duplicate `agent_end`.
 
-No real alerts/provider requests/reset redemption, installation, remote or PiG
-core changes were performed. PiG remains at the target commit with a clean tree.
-Interactive reload and packed placement are still combined-qualification gates;
-RPC process shutdown is not claimed as terminal reload proof.
+The RPC driver now has `send`/`wait_response` for held operations and drains final
+stdout frames on close. It forces `PIG_USE_PI_DIRS=0`, both agent-directory overrides
+and both offline flags, so ambient shared-mode settings cannot select live credentials.
 
-Next: codex-usage, then rendering feasibility and remaining priority ports.
+No real account/provider/WHAM requests or credit redemption were performed by tests;
+no installation, remote or PiG core change was made. A harness Pushover alert did ask
+the operator for scheduler host-scope approval; it was not an extension delivery test.
+PiG remains at the target commit with a clean tree. Interactive reload and packed
+placement are still combined-qualification gates; RPC shutdown is not terminal proof.
+
+Next: pins/imgview rendering feasibility and implementation, then scheduler pure
+logic and runtime only if its startup-metadata gate is resolved. Codex native OAuth,
+all reset acknowledgements, UUID/body/claim/header correctness, model/session stale
+suppression, HTTP disconnect and new-epoch usability now have real PiG caller proofs.
+Run `python3 -m test.integration.codex_usage`, `codex_native` and `codex_lifetime`.
+
+Pins source remains at `../kmet/target/reference/pi-pins-source/extensions/pin.ts`,
+commit `776217ccdce52aa0ae7794998847ff2253677250`, SHA-256
+`f32d9f61508d882ffe4e780095f5c83cda391d4f6526fa364b19523f9e6e1262`.
+Public `tui.NewMarkdownWithOptions` accepts explicit `MarkdownTheme` callbacks,
+but `tui.HighlightCode` reads process-global `ActiveTheme`; Markdown link rendering
+also reads global capabilities. Probe per-factory theme/capability handling rather
+than mutating shared globals or writing a competing renderer.
+
 Pinned original Codex source and license are still at
 `/tmp/pig-extensions-review.JPGJpX/{pi-codex-usage.ts,codex-LICENSE}`; their hashes
 match the plan. This temporary location may disappear; use the pinned origin and
 verify digests rather than treating the path as permanent project provenance.
-Scheduler startup metadata remains an unresolved gate; do not silently omit it.
+Scheduler startup metadata remains unresolved; source proof/design is in
+`docs/feasibility.md`. Operator approval for separate host metadata work (or explicit
+runtime deferral) was requested while independent work continues. Do not silently
+omit suppression or edit PiG without approval. `plan.md` had pre-existing formatting
+changes at this continuation's start and was deliberately left unstaged.
 No BTW or extension-toggle implementation has been started.
 
 ## Historical initial snapshot
