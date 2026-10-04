@@ -7,6 +7,11 @@ import tempfile
 
 from test.integration.rpc import ROOT
 
+if os.environ.get("PIG_FUSED") == "1":
+    # A prebuilt fused binary cannot load the mutant source.
+    print("SKIP mutation: not applicable to a fused Piglet Binary")
+    raise SystemExit(0)
+
 with tempfile.TemporaryDirectory(prefix="savelast-mutant-") as temp:
     module = Path(temp) / "savelast"
     shutil.copytree(ROOT / "extensions/savelast", module)

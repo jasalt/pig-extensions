@@ -46,8 +46,9 @@ class PTYHost:
 
         argv = [str(BIN), "--no-extensions", "--no-skills", "--no-prompt-templates",
                 "--no-context-files", "--session", str(self.session), *(args or [])]
-        for extension in extensions:
-            argv += ["-e", str(extension)]
+        if os.environ.get("PIG_FUSED") != "1":
+            for extension in extensions:
+                argv += ["-e", str(extension)]
         self.proc = subprocess.Popen(argv, cwd=self.cwd, env=base, stdin=slave, stdout=slave,
                                      stderr=slave, preexec_fn=controlling_terminal)
         os.close(slave)

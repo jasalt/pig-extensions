@@ -21,7 +21,8 @@ This collection is **in progress**, not the completed six-extension port.
 
 Each `extensions/<name>` is an independent importable Go factory/module, using
 SDK v0.3.1 and Go floor 1.26. The repository root is not an extension bundle.
-There is no mandatory umbrella Package, Node runtime, or Piglet.
+There is no mandatory umbrella Package or Node runtime; the root
+`piglet.yaml` is an optional in-process build recipe, not a bundle.
 
 ```sh
 # One-off source-root load, with ambient extensions disabled:
@@ -36,6 +37,18 @@ launch browsers, mutate credentials, or schedule work. No global installation,
 remote publication or PiG core changes are made by the project tests.
 For installed resource selection use **`pig config`** or **`pig config --local`**;
 there is deliberately no `extension-toggle` port or new settings plane.
+
+## Run them in-process
+
+Stock `pig` runs Go extensions as subprocesses. To run all six inside PiG's
+own process, build a fused Piglet Binary from [`piglet.yaml`](piglet.yaml):
+
+```sh
+PIG_SOURCE_ROOT=/path/to/PiG-checkout pig piglet build ./piglet.yaml --format binary --out ./pig-extensions
+```
+
+See [docs/in-process.md](docs/in-process.md) for requirements, verification
+and what changes in-process.
 
 ## Verification
 

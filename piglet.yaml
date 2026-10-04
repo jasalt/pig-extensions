@@ -1,0 +1,24 @@
+# Optional Piglet that compiles all six extensions into one PiG executable,
+# running them in-process (fused) instead of as extension subprocesses.
+# See docs/in-process.md. Remove entries you do not want: the scheduler and
+# notifier are active whenever they are included.
+name: pig-extensions
+description: "jasalt/pig-extensions Go extensions, fused in-process"
+release:
+  version: 0.1.0
+extensions:
+  - name: savelast
+    origins: [local:./extensions/savelast]
+  - name: notify-pushover
+    origins: [local:./extensions/notify-pushover]
+  - name: codex-usage
+    origins: [local:./extensions/codex-usage]
+  - name: imgview
+    origins: [local:./extensions/imgview]
+  - name: pins
+    origins: [local:./extensions/pins]
+  - name: schedule
+    origins: [local:./extensions/schedule]
+build:
+  # Fail the build instead of falling back to a subprocess for any member.
+  extensionRealization: fused

@@ -12,6 +12,7 @@ package schedule
 
 import (
 	_ "embed"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
@@ -106,7 +107,7 @@ func newExtension(now func() time.Time, tick time.Duration, getenv func(string) 
 			s.waves.Add(1)
 			go func() {
 				defer s.waves.Done()
-				_, _ = r.fireDue(host, sourceSessionStart, nil)
+				safeWave(r, host, sourceSessionStart)
 			}()
 		}
 		s.startTicker(r, host)
@@ -225,7 +226,7 @@ func (s *scheduler) startTicker(r *runner, host sdkHost) {
 			case <-host.Done():
 				return
 			case <-ticker.C:
-				_, _ = r.fireDue(host, sourceTick, nil)
+				safeWave(r, host, sourceTick)
 			}
 		}
 	}()
@@ -254,6 +255,18 @@ func (s *scheduler) shutdown() {
 	case <-done:
 	case <-time.After(5 * time.Second):
 	}
+}
+
+// safeWave runs an automatic wave on an extension-owned goroutine. The SDK
+// recovers handler panics but not these; in a fused Piglet Binary an
+// unrecovered panic would terminate PiG itself.
+func safeWave(r *runner, host session, source string) {
+	defer func() {
+		if recovered := recover(); recovered != nil {
+			r.emitError(host, fmt.Sprintf("runner panic: %v", recovered), "panic")
+		}
+	}()
+	_, _ = r.fireDue(host, source, nil)
 }
 
 func writeFileAtomic(path string, data []byte) error {

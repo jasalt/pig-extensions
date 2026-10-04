@@ -1,5 +1,6 @@
 """Actual caller replacement/disconnect while a native usage response is held."""
 import json
+import os
 from pathlib import Path
 import tempfile
 
@@ -40,7 +41,11 @@ for action in ["model", "session", "disconnect"]:
                 assert proxy.disconnected.wait(5), "obsolete HTTP connection survived lifecycle change"
                 if action != "disconnect":
                     rpc.wait_response(pending)
-                    obsolete = [r for r in rpc.events[marker:] if r.get("method") == "notify"]
+                    # In a fused binary every bundled extension starts with the
+                    # session; notify-pushover's startup warning is not Codex output.
+                    obsolete = [r for r in rpc.events[marker:] if r.get("method") == "notify"
+                                and not (os.environ.get("PIG_FUSED") == "1"
+                                         and r.get("message", "").startswith("Pushover credentials are not configured"))]
                     assert not obsolete, "obsolete success/error was displayed: " + json.dumps(obsolete)
                     assert "1%/5h" not in json.dumps(rpc.events[marker:]), "obsolete footer status published"
                     _, rows = rpc.call("prompt", message="/codex-usage")

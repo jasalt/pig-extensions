@@ -38,8 +38,11 @@ class RPC:
             args += ["--session", str(session)]
         else:
             args += ["--no-session"]
-        for extension in extensions:
-            args += ["-e", str(extension)]
+        # PIG_FUSED=1: PIG_BIN is a Piglet Binary with these extensions
+        # compiled in-process, so no source paths are passed.
+        if os.environ.get("PIG_FUSED") != "1":
+            for extension in extensions:
+                args += ["-e", str(extension)]
         self.proc = subprocess.Popen(args, cwd=directory, env=env, text=True,
                                      stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE)

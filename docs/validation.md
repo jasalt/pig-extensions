@@ -278,6 +278,25 @@ live host (unit-tested only), interactive `/resume`, compaction against a real
 compaction run, multi-process delivery races beyond file locks, DST in a live
 session.
 
+## Fused (in-process) Piglet Binary
+
+`piglet.yaml` built with the reviewed binary from a clean local clone at
+`0e6ed0048282a15531ea1652a5833de4da4dd1a7` (`PIG_SOURCE_ROOT`); PiG's fused
+process-global vet passed and `pig piglet show` lists all six components as
+`fused binary`. Passed against that binary with `PIG_FUSED=1` (no `-e`):
+
+```sh
+python3 -m test.integration.fused_runtime   # commands present, zero child processes
+# and: savelast notify_pushover notify_tool notify_cancel codex_usage codex_native
+#      codex_lifetime imgview imgview_pty pins_rpc pins_pty schedule_rpc
+```
+
+All six run together in that binary. `codex_lifetime`'s stale-notification check excludes
+notify-pushover's startup warning only in fused mode. `savelast_mutation` is
+skipped there because it loads mutant source. Stock-binary results for every
+suite are unchanged. The binary was a scratch build artifact; nothing was
+installed or published.
+
 ## Remaining scope
 
 Codex's combined/terminal gates and the other three priority ports, rendering

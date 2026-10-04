@@ -690,3 +690,21 @@ func TestProcessGroupExecutor(t *testing.T) {
 		t.Fatal("missing shell is an error")
 	}
 }
+
+func TestSafeWaveRecoversPanics(t *testing.T) {
+	h := newHarness(t)
+	h.add(func(j *Job) { j.Action, j.Command, j.Tier = kindShell, "x", tierMutate })
+	h.runner.exec = func(context.Context, string, []string, string, time.Duration) (execResult, error) {
+		panic("boom")
+	}
+	s := h.session()
+	safeWave(h.runner, s, sourceTick)
+	if !strings.Contains(strings.Join(s.notes, "\n"), "error: [pig-schedule] runner panic: boom") {
+		t.Fatal(s.notes)
+	}
+	// The wave lock was released by the deferred unlock despite the panic.
+	if !h.runner.waves.TryLock() {
+		t.Fatal("wave lock leaked")
+	}
+	h.runner.waves.Unlock()
+}
