@@ -29,6 +29,21 @@ actually implemented, rather than declaring planned behavior accepted.
 - Own request cancellation, shutdown joins and idle HTTP cleanup. A send error
   does not mean the remote service did not accept the notification.
 
+## imgview
+
+- Tool images are ordinary ordered PiG tool-result content; the host renders
+  them with its own capabilities and settings.
+- Slash-command images use PiG's public `tui.Image`. In subprocess placement
+  its terminal capabilities come from the inherited environment, because the
+  Go SDK does not expose the host's resolved capabilities; host
+  `terminal.*` overrides and measured cell sizes are not applied there. Fused
+  placement shares the host's state. Recorded as a known difference rather
+  than inventing a terminal protocol.
+- Honest browser errors (no "opened" claim on failure; browser-only failure is
+  an error), private viewer files kept after unload, and a pre-transport
+  refusal for images that cannot fit one extension frame.
+- Linux `xdg-open` only.
+
 ## Not accepted by these decisions
 
 No change to scheduler policy/startup suppression, rendering requirements,

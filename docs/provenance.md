@@ -64,5 +64,26 @@ on cross-origin redirects. Reset redemption remains immediate, without confirmat
 or automatic retry. Formatting currently qualified for en_US/en_GB, local timezone
 and DST boundaries; no blanket locale parity is asserted.
 
+## imgview
+
+Adapted from Gregory Johnson's `gregjohnso/pi-imgview`, commit
+`17b568e8e3b70d009adb8ac090d2b3280f065f11`; local reference
+`../kmet/target/reference/pi-imgview-source`. MIT, copyright 2026 Gregory
+Johnson; license retained verbatim at `extensions/imgview/LICENSE`
+(SHA-256 `abd753e10250d7afb92c8b5ce361586d62d85f4d130a26e8707066d3a198dfcd`).
+
+| Source file | SHA-256 |
+| --- | --- |
+| `extensions/imgview/index.ts` | `94288bb36c270075a9600a10753fdf95cc2dd396b5391c9d4a02bf61b27216b2` |
+| `extensions/imgview/utils.ts` | `364f4b99398cbd2cd36b70e511eb69151ff97ad4612fd0deda5228a28768afdf` |
+| `extensions/imgview/utils.test.ts` | `3c42adaa903f7fc74ba231ef2d7cf21a95627e867a7c8f419bad0bc6040a2157` |
+
+The viewer HTML/CSS, MIME table, tool text and guidelines are carried over;
+new Go code is copyright 2026 Jarkko Saltiola under MIT. kmet's imgview was
+consulted only for its error-reporting and privacy decisions; no kmet code was
+copied. The module imports PiG's public `tui` package (MIT, Hewlett Packard
+Enterprise Development LP) for the slash-command image component.
+Differences are listed in `extensions/imgview/README.md`.
+
 This inventory covers implemented modules only. The prospective source inventory
 in `plan.md` is not license clearance for unimplemented ports.

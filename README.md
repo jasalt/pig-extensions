@@ -13,7 +13,7 @@ This collection is **in progress**, not the completed six-extension port.
 | [notify-pushover](extensions/notify-pushover/README.md) | Implemented; offline HTTP, real command/tool and cancellation tests |
 | [codex-usage](extensions/codex-usage/README.md) | Implemented; native OAuth/adapter caller, reset, replacement/disconnect and unit/race tests; combined/terminal gates remain |
 | pins | Go rendering feasibility and implementation pending |
-| imgview | Native rendering/desktop feasibility and implementation pending |
+| [imgview](extensions/imgview/README.md) | Implemented; unit/race, real-host RPC command/tool and interactive PTY renderer tests; actual graphics and desktop browser not verified |
 | schedule | Pure logic and host startup/policy feasibility pending |
 | btw | Conditional Go feasibility review after the six priority ports |
 

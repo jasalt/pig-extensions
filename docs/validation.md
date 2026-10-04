@@ -151,6 +151,43 @@ combined placement remain required; no full combined/terminal acceptance is
 claimed from these RPC proofs. Fresh active LSP checks are clean for the eight
 changed/shared Python caller fixtures.
 
+## imgview
+
+Passed (Go 1.26.x default and pinned `GOTOOLCHAIN=go1.27.1`):
+
+```sh
+(cd extensions/imgview && go test ./... && go test -race ./... && go vet ./...)
+python3 -m test.integration.imgview
+python3 -m test.integration.imgview_pty
+```
+
+Unit tests encode all upstream `utils.test.ts` cases plus BMP/AVIF/SVG
+whitespace sniffing, misleading declared types, Node-forgiving base64, literal
+`+` and malformed percent payloads, cwd/`~`/non-regular/missing files, HTTP
+redirect/404/declared-type/connection failure, cancellation during a held
+download body and before a file read, viewer escaping/uniqueness/`0700`/`0600`
+modes, and argv-only opener launch with a missing-executable error.
+
+Real host RPC (reviewed binary): `/imgcat` persists exactly one display
+`imgview-image` message with base64 details and starts no turn; `/imgshow`
+writes a private viewer and invokes a fake `xdg-open` with its path; data URI
+`/imgboth`; usage/unsupported/missing/directory/malformed errors; missing opener
+gives only an error for `/imgshow` and keeps the inline message for `/imgboth`.
+A hermetic image-capable model calls `show_image`: the tool update, ordered
+text+image result, caption, model delivery of the image, browser-only text
+result without base64, browser launch failure as an error, `both` partial
+success, and non-image/missing-file rejections pass.
+
+Interactive PTY (reviewed binary): the `/imgcat` renderer emits Kitty protocol
+bytes with the image data under a Kitty environment, and PiG's native
+`[image/png] 2x2` fallback under a plain terminal or `PI_IMAGE_PROTOCOL=none`.
+This is terminal-stream evidence only, not proof of a displayed graphic. No
+real desktop browser launch was attempted.
+
+Registration validation passed (`valid: true`, `registered: true`, Go factory,
+packable, source hash
+`d2e907a4113853e9f6d25502575cc5d3ecc23c40b44f311ed7232953d2518e10`).
+
 ## Remaining scope
 
 Codex's combined/terminal gates and the other three priority ports, rendering
