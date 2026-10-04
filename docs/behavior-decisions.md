@@ -75,7 +75,8 @@ actually implemented, rather than declaring planned behavior accepted.
   timeout leaves background children holding the call open; measured).
 - Current-session delivery documented honestly; no history-isolation claim.
 - Fresh-row RMW (no resurrection, disable preserved), caps inside the insert
-  lock, compaction wait on PiG's compaction events, `powershell` as a shell.
+  lock, compaction wait on PiG's compaction events (PiG itself also queues a
+  prompt sent during compaction), `powershell` as a shell.
 
 ## Not accepted by these decisions
 

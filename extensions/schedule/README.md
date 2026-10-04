@@ -115,10 +115,12 @@ and the command is stored verbatim — don't put secrets in `command`.
 - `powershell` is treated as a shell surface in every tier.
 - Fresh-row read-modify-write for all mutations and caps checked inside the
   insert lock (kmet's fix); a job disabled or cancelled mid-run stays so.
-- Compaction: PiG reports a prompt rejected during compaction to the user,
-  not to the extension, so delivery waits on `session_before_compact` /
-  `session_compact` / `session_compact_failed` (bounded at 120 s), and
-  retries a returned busy error as a backstop.
+- Compaction: in interactive mode PiG accepts an extension prompt submitted
+  during compaction and delivers it afterwards, returning no error
+  (`upstream-repros/pig-send-during-compaction`). Delivery still waits on
+  `session_before_compact` / `session_compact` / `session_compact_failed`
+  (bounded at 120 s) and retries a returned busy error, as the original
+  does.
 - The contract line says "scheduled run", not "isolated", and the skill no
   longer promises "no prior conversation": prompts enter the current session.
 - PiG paths, `[pig-schedule]` labels, `pig-schedule` message type,

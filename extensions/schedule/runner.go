@@ -237,9 +237,9 @@ func (r *runner) record(job Job, runID, key, source, status, detail, started str
 }
 
 // sendAgentMessage submits a user message after any in-flight compaction,
-// bounded by r.wait. PiG reports an extension submission rejected during
-// compaction to the user, not to the extension, so the compaction events are
-// the primary signal and a returned busy error is retried as a backstop.
+// bounded by r.wait, as the original does. PiG itself queues a prompt sent
+// during compaction (observed interactively), so the wait is ordering, and a
+// returned busy error is retried as a backstop.
 func (r *runner) sendAgentMessage(s session, body, deliverAs string) error {
 	deadline := time.Now().Add(r.wait)
 	for {

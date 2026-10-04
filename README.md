@@ -52,6 +52,12 @@ PIG_SOURCE_ROOT=/path/to/PiG-checkout pig piglet build ./piglet.yaml --format bi
 See [docs/in-process.md](docs/in-process.md) for requirements, verification
 and what changes in-process.
 
+## Upstream issues
+
+Problems found in PiG and in the original Pi extensions, each with an
+isolated reproduction, are in [UPSTREAM-ISSUES.md](UPSTREAM-ISSUES.md)
+(not filed upstream).
+
 ## Verification
 
 [Validation evidence](docs/validation.md) records exact scope and known remaining
