@@ -188,6 +188,48 @@ Registration validation passed (`valid: true`, `registered: true`, Go factory,
 packable, source hash
 `d2e907a4113853e9f6d25502575cc5d3ecc23c40b44f311ed7232953d2518e10`).
 
+## pins
+
+Passed (Go 1.26.x default and pinned `GOTOOLCHAIN=go1.27.1`):
+
+```sh
+(cd extensions/pins && go test ./... && go test -race ./... && go vet ./...)
+python3 -m test.integration.pins_rpc
+python3 -m test.integration.pins_pty
+```
+
+Unit tests translate kmet's model/UI cases and the original semantics: text
+extraction, auto-label/preview with UTF-16 lengths and ECMAScript whitespace,
+ten-candidate window with textless distance, last-snapshot restore, `nextId`
+repair, ten corrupt-state shapes, command parsing including free labels and
+the restricted `list` alias, overlay geometry, layout invariants for heights
+1–79, full-width borderless rendering, scrolling/switching/`g`/`G`, Kitty
+CSI-u keys, resize/tiny terminals, native Markdown table/code, close keys
+before the first frame, snapshot immutability and disposal, and the
+lexer-to-theme token mapping.
+
+Real host RPC (reviewed binary) with a seeded branched session: a pin that
+exists only on an abandoned branch is not visible; `/pin`, `pick` through an
+RPC select response (exact title/options, cancel adds nothing), labels,
+`list of plugins` label, `rm`/usage/unknown errors, `show` warning outside the
+TUI, `help`, exact persisted snapshots, restart persistence, `clear` with ID
+restart, new-session empty branch, and corrupt-state refusal for every
+state-reading command with the corrupt entry left intact.
+
+Interactive PTY (reviewed binary) with a custom theme whose `syntaxKeyword`
+is `#123abc`: `/pin show` mounts the overlay; the Go keyword is emitted with
+that exact host color; the heading is rendered, the table keeps its borders;
+`G`, `PgDn`, `PgUp` change the frame; a width change re-renders; `q` and `Esc`
+close and the editor accepts the next command; `/pin list 7` preselects.
+This closes the host-theme highlighting counterexample recorded in
+`docs/pins-rendering-evidence.md` for this extension. Exact screen-cell
+composition, height-only resize and hyperlink-setting propagation are not
+claimed.
+
+Registration validation passed (`valid: true`, `registered: true`, Go factory,
+packable, source hash
+`418380f23262f591d0adb12921bcb382f1a8de9cc1b12d8db9c4242fc9025c2e`).
+
 ## Remaining scope
 
 Codex's combined/terminal gates and the other three priority ports, rendering

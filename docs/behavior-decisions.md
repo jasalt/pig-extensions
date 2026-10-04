@@ -44,6 +44,20 @@ actually implemented, rather than declaring planned behavior accepted.
   refusal for images that cannot fit one extension frame.
 - Linux `xdg-open` only.
 
+## pins
+
+- Original command/model semantics; kmet's borderless full-width browser and
+  its regression fixes (help never opens the browser, immutable snapshots,
+  visible corrupt-state errors, `nextId` repair, input before first paint).
+- `list` is a `show` alias only with no argument or a pin number, because the
+  original documents `/pin list of plugins` as a free label.
+- Active-branch reads on every command rather than a session-start cache.
+- Browser requires PiG `tui` mode; `HasUI` alone is not trusted.
+- Host-theme code highlighting through a per-instance copy of PiG's lexer
+  mapping, instead of the process-global `tui.HighlightCode`, so no package
+  global is read for colors or mutated. Hyperlink capability and height-only
+  resize remain SDK gaps, recorded in the pins README.
+
 ## Not accepted by these decisions
 
 No change to scheduler policy/startup suppression, rendering requirements,

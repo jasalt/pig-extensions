@@ -12,7 +12,7 @@ This collection is **in progress**, not the completed six-extension port.
 | [savelast](extensions/savelast/README.md) | Implemented; unit, SDK error-boundary and real RPC/mutation tests |
 | [notify-pushover](extensions/notify-pushover/README.md) | Implemented; offline HTTP, real command/tool and cancellation tests |
 | [codex-usage](extensions/codex-usage/README.md) | Implemented; native OAuth/adapter caller, reset, replacement/disconnect and unit/race tests; combined/terminal gates remain |
-| pins | Go rendering feasibility and implementation pending |
+| [pins](extensions/pins/README.md) | Implemented; unit/race, real-host RPC command/state and interactive PTY browser tests |
 | [imgview](extensions/imgview/README.md) | Implemented; unit/race, real-host RPC command/tool and interactive PTY renderer tests; actual graphics and desktop browser not verified |
 | schedule | Pure logic and host startup/policy feasibility pending |
 | btw | Conditional Go feasibility review after the six priority ports |

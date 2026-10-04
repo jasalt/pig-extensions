@@ -27,7 +27,7 @@ def run():
             session = cwd / "session.jsonl"
             seed(session, cwd, [])
             with PTYHost(cwd, [EXT], session, env=env) as host:
-                host.wait_command("imgcat")
+                host.wait_command("imgcat", "Render an image inline")
                 mark = host.command("/imgcat dot.png")
                 host.pump_until(lambda: bool(host.entries("imgview-image")))
                 host.pump_until(lambda: b"imgview: " in host.raw[mark:] and b"(image/png," in host.raw[mark:])

@@ -85,5 +85,18 @@ copied. The module imports PiG's public `tui` package (MIT, Hewlett Packard
 Enterprise Development LP) for the slash-command image component.
 Differences are listed in `extensions/imgview/README.md`.
 
+## pins
+
+Command and state semantics adapted from s4lv0's `s4lv0/pi-pins`, commit
+`776217ccdce52aa0ae7794998847ff2253677250`, `extensions/pin.ts`
+(SHA-256 `f32d9f61508d882ffe4e780095f5c83cda391d4f6526fa364b19523f9e6e1262`).
+MIT, copyright 2026 s4lv0; license retained verbatim at `extensions/pins/LICENSE`
+(SHA-256 `4bd84b22c7060ee70d38691df16a7d6daa3945bbd9573dce12cc84c99605cc64`).
+Browser presentation follows kmet's `pins/ui.clj` (layout rules and footer
+text, no code copied). `extensions/pins/highlight.go` adapts PiG v0.3.1
+`tui/highlight.go` (MIT, Hewlett Packard Enterprise Development LP); its
+notice is kept in the file header. New Go code: copyright 2026 Jarkko
+Saltiola, MIT. Differences are listed in `extensions/pins/README.md`.
+
 This inventory covers implemented modules only. The prospective source inventory
 in `plan.md` is not license clearance for unimplemented ports.

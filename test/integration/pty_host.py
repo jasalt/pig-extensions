@@ -90,33 +90,24 @@ class PTYHost:
     def write(self, data):
         os.write(self.master, data if isinstance(data, bytes) else data.encode())
 
-    def wait_command(self, name, timeout=120):
-        """Wait until slash autocomplete lists `name`, then clear the editor.
-
-        The interactive host accepts input before extensions finish loading.
+    def wait_command(self, name, description, timeout=120):
+        """Wait until slash autocomplete shows `name` with its description,
+        then clear the editor. The interactive host accepts input before
+        extensions finish loading, so an early Enter would reach the model.
         """
         deadline = time.monotonic() + timeout
         while True:
             mark = len(self.raw)
             self.write("/" + name)
-            try:
-                self.pump_until(lambda: name.encode() in self.raw[mark:] and b"\x1b[?2026l" in self.raw[mark:], timeout=3)
-                self.settle(0.3)
-                listed = name.encode() in self.raw[mark:] and b"No matching" not in self.raw[mark:]
-            except AssertionError:
-                listed = False
+            self.settle(0.3, timeout=3)
+            listed = description.encode() in self.raw[mark:]
             self.write("\x7f" * (len(name) + 1))
-            self.settle(0.2)
-            if listed and self._autocomplete_listed(name, mark):
+            self.settle(0.2, timeout=3)
+            if listed:
                 return
             if time.monotonic() > deadline:
                 raise AssertionError(f"command /{name} never registered")
             time.sleep(0.5)
-
-    def _autocomplete_listed(self, name, mark):
-        # The typed text itself contains the name; require a second occurrence
-        # (the suggestion row) in the frames after typing.
-        return self.raw[mark:].count(name.encode()) >= 2
 
     def command(self, text):
         mark = len(self.raw)
