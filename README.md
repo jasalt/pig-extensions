@@ -14,7 +14,7 @@ This collection is **in progress**, not the completed six-extension port.
 | [codex-usage](extensions/codex-usage/README.md) | Implemented; native OAuth/adapter caller, reset, replacement/disconnect and unit/race tests; combined/terminal gates remain |
 | [pins](extensions/pins/README.md) | Implemented; unit/race, real-host RPC command/state and interactive PTY browser tests |
 | [imgview](extensions/imgview/README.md) | Implemented; unit/race, real-host RPC command/tool and interactive PTY renderer tests; actual graphics and desktop browser not verified |
-| schedule | Pure logic and host startup/policy feasibility pending |
+| [schedule](extensions/schedule/README.md) | Implemented; unit/race and real-host privilege/queued-tier/shell/trust/tool tests. Startup-wave substitute needs your acceptance |
 | btw | Conditional Go feasibility review after the six priority ports |
 
 ## Select exactly what you need

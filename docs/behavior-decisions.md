@@ -58,6 +58,25 @@ actually implemented, rather than declaring planned behavior accepted.
   global is read for colors or mutated. Hyperlink capability and height-only
   resize remain SDK gaps, recorded in the pins README.
 
+## schedule
+
+- Original v0.4.0 kinds, actions, limits, policy tiers (strict default,
+  `suggest`, opt-in legacy mode), trust gate with `run_now` bypass and
+  interactive-create trust; no new confirmation gates.
+- **Startup suppression substitute (needs user acceptance):** no supported
+  host signal identifies a CLI initial prompt, so the process-startup wave is
+  deferred to the first idle tick instead of being skipped only when a prompt
+  was given. The exact alternative is the proposed `hasInitialPrompt` field in
+  `docs/feasibility.md`. `/new` and `/resume` fire immediately as original.
+- Exact per-turn privilege ownership by reserved prompt text read from the
+  active branch at `tool_call` time (real-host probe: queued follow-up user
+  messages emit no `before_agent_start`, and one run settles once).
+- Shell jobs run in their own process group from the extension (host exec
+  timeout leaves background children holding the call open; measured).
+- Current-session delivery documented honestly; no history-isolation claim.
+- Fresh-row RMW (no resurrection, disable preserved), caps inside the insert
+  lock, compaction wait on PiG's compaction events, `powershell` as a shell.
+
 ## Not accepted by these decisions
 
 No change to scheduler policy/startup suppression, rendering requirements,

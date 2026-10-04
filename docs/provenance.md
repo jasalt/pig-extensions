@@ -98,5 +98,40 @@ text, no code copied). `extensions/pins/highlight.go` adapts PiG v0.3.1
 notice is kept in the file header. New Go code: copyright 2026 Jarkko
 Saltiola, MIT. Differences are listed in `extensions/pins/README.md`.
 
+## schedule
+
+Adapted from Alessandro Pungitore's `pungggi/pi-schedule` v0.4.0, commit
+`ed5ea93f1a82ac7038fda34acbbfaa572472f9e3`, archive
+`https://codeload.github.com/pungggi/pi-schedule/tar.gz/ed5ea93f1a82ac7038fda34acbbfaa572472f9e3`
+(SHA-256 `e7ec9ec3120a99770834a857c65dde8ad62fcf2be6dfc4efb3c95791c2b4dfc4`).
+MIT, copyright 2025 Alessandro Pungitore; license retained verbatim at
+`extensions/schedule/LICENSE`. The skill is adapted from the original
+`skills/schedule/SKILL.md` with corrected claims. Tool text, prompt contract,
+limits, regexes and policy tables are carried over; new Go code is copyright
+2026 Jarkko Saltiola, MIT. kmet's schedule port was consulted for its
+fresh-row and reservation decisions; no kmet code was copied.
+
+| Source file | SHA-256 |
+| --- | --- |
+| `src/action.ts` | `1384a7ed8979c19fabfb8ac4eea1623046a13b84b3915f3c6e71b79c365d5f7f` |
+| `src/cli-prompt.ts` | `014bcaa247da75246b1213bffd4b02e6d018911f1a9de0268403e758f742987e` |
+| `src/extension.ts` | `56dfc75a61478d790cb56786dad3c44e9129bf79d7805321ee3eec895ffe0e8e` |
+| `src/ledger.ts` | `722be2ba8f9ca787e204ce80214168dc34ae0d30d3cb60f18d5431b0f33e41e2` |
+| `src/lock.ts` | `610e21d12a5bbf2cfc3defeebd3e2f15f5c1f10e1f3f9ba60cc53c71dcb36d2e` |
+| `src/policy.ts` | `dd0d283d79d95924b5a70346e4d9f57e1524d51367d0d04167c66b048c903d5a` |
+| `src/privilege.ts` | `296f95663ef339f25832f88d9f467fdf278f6887833a104da22eea66030b5a1d` |
+| `src/prompt.ts` | `a11c20be917dcb0af500a8b482ce93ce266212c262d55a70060ec01d0be50ecc` |
+| `src/redact.ts` | `ef042a8981c783cfc462ea64e610b7116cc3d9f76112e81489856adf60953bc8` |
+| `src/runner.ts` | `d14a07bbd52c8505cbe5f1e97243d708037a79565b5dae69c43679bdd0140e22` |
+| `src/schedule.ts` | `f1b624e17c3dcdebac514dd18af903c3fb94679db0e61ee009af0db40b9432f5` |
+| `src/store.ts` | `ad17be87babdb65a60cb2912b844e4e169b3dbe36b64dfb0773bdf424b2faccf` |
+| `src/tool.ts` | `bc9f977775cb3cfdfd1a4c207bb04991888d9e08ec08c3b79232669055a42a61` |
+| `src/trust.ts` | `6f2b8ea47ddc2218dedbd44353dfa545813b2777f64805a0e6d53d4500244109` |
+| `src/types.ts` | `e79853526bece9dd78223d87c7d24b0c264d42abcb53b8df2e0046e672af3bc4` |
+| `skills/schedule/SKILL.md` | `df237c174ec34cff37542530e39e5a49173176a0e4efcc4a2597668c76e4344e` |
+| `LICENSE` | `5a4c2f72c4d2acfe7833b8160a339662f31c0930915b9b44009d42f24bdede49` |
+
+Differences are listed in `extensions/schedule/README.md`.
+
 This inventory covers implemented modules only. The prospective source inventory
 in `plan.md` is not license clearance for unimplemented ports.

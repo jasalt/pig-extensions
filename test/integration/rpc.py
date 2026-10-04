@@ -11,7 +11,7 @@ BIN = Path(os.environ.get("PIG_BIN", ROOT.parent / "PiG/bin/pig")).resolve()
 
 
 class RPC:
-    def __init__(self, directory, extensions, session=None, extra_env=None, model=None, extra_args=None):
+    def __init__(self, directory, extensions, session=None, extra_env=None, model=None, extra_args=None, skills=False):
         directory = Path(directory)
         self.events = []
         self.lines = queue.Queue()
@@ -26,8 +26,10 @@ class RPC:
                 del env[key]
         if extra_env:
             env.update(extra_env)
-        args = [str(BIN), "--mode", "rpc", "--no-extensions", "--no-skills",
+        args = [str(BIN), "--mode", "rpc", "--no-extensions",
                 "--no-prompt-templates", "--no-context-files", "--no-themes"]
+        if not skills:
+            args.append("--no-skills")
         if extra_args:
             args += extra_args
         if model:

@@ -230,6 +230,54 @@ Registration validation passed (`valid: true`, `registered: true`, Go factory,
 packable, source hash
 `418380f23262f591d0adb12921bcb382f1a8de9cc1b12d8db9c4242fc9025c2e`).
 
+## schedule
+
+Passed (Go 1.26.x default and pinned `GOTOOLCHAIN=go1.27.1`):
+
+```sh
+(cd extensions/schedule && go test ./... && go test -race ./... && go vet ./...)
+python3 -m test.integration.schedule_rpc
+```
+
+Unit tests translate the original suite: parsing (interval/daily/once forms,
+bounds), next-run computation including America/New_York spring-forward and
+fall-back (earlier instant), relative formatting, missed-window grace, rate
+limiter, kind/wakeOn/timeout/maxRuns validation, follow-up selection,
+truncation, prompt contract with fence/ANSI/C1 break-out cases, redaction
+(token shapes, schemes, quoted/unquoted assignments, idempotence). Store tests
+cover provenance relabeling, foreign-row coercion/clamping, seven corrupt
+shapes quarantined byte-for-byte, fresh/stale store locks, caps, concurrent
+writers, default scope, trust fail-closed cases, job locks (stale takeover,
+victim release) and ledger idempotency window/rotation. Runner tests with a
+fake session cover firing, idempotent replay, `run_now`, trust gate and
+notices, caps/follow-ups, busy ticks, skip/error advancement, lock contention,
+wave serialization, concurrent disable/cancel during delivery, `once`/`maxRuns`
+termination, notify/message/shell kinds with redaction, compaction wait
+(success, timeout, busy retry, shutdown), store error cooldown, the privilege
+matrix, and **queued-tiers-activate-only-for-their-own-turn** and
+**stale-attempts-preserve-disable-and-never-resurrect-cancelled-jobs**. A real
+process-group test proves a timed-out job's background child is killed.
+
+Real host RPC (reviewed binary, scripted local model):
+- no wave at process startup; `/new` fires a due read_only prompt; the
+  model's `bash` call is blocked with the scheduler reason, the batch
+  terminates (one provider request), the store advances and the ledger
+  records `delivered`; the user's next own turn runs `bash` unrestricted;
+- two jobs due together (read_only then a queued mutate follow-up in the same
+  run): the first turn's `bash` is blocked, the second's runs;
+- a shell job with a 1.5 s timeout and a background `sleep 30` is recorded as
+  killed, its child process is gone, and persisted output is redacted; an
+  untrusted project shell job is held back with a notice and never runs;
+- the model creates a notify job through the tool; the skill is written
+  under the state directory and offered as `skill:schedule`.
+
+Registration validation passed (`valid: true`, `registered: true`, packable,
+source hash `f27f7eaba826f57d201a36088306e8a304a0a277f34503eeab83f6fb6a6a7bbd`)
+and created no store or skill files. Not covered: the 30 s idle tick on a
+live host (unit-tested only), interactive `/resume`, compaction against a real
+compaction run, multi-process delivery races beyond file locks, DST in a live
+session.
+
 ## Remaining scope
 
 Codex's combined/terminal gates and the other three priority ports, rendering
