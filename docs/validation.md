@@ -299,8 +299,15 @@ installed or published.
 
 ## Remaining scope
 
-Codex's combined/terminal gates and the other three priority ports, rendering
-feasibility, scheduler metadata/policy
-qualification, combined placement/lifetime tests and conditional BTW assessment
-remain unaccepted. Text-only terminal tests will not be presented as real graphics
-or desktop-opener proof. See `plan.md` for the full remaining acceptance matrix.
+- **Your decision:** the scheduler's deferred startup wave (instead of the
+  original initial-prompt suppression), or approval of the proposed
+  `hasInitialPrompt` host field in `docs/feasibility.md`.
+- BTW port (child-session substrate proven; overlay/UI qualification first).
+- Live checks that need explicit approval: real Pushover delivery, Codex
+  usage/reset against an account, terminal graphics on a physical terminal,
+  desktop browser launch through the Lima boundary.
+- Interactive `/reload`/`/resume` and packed-cell placement for the combined
+  set; the scheduler's 30 s tick on a live host; real compaction during
+  delivery.
+- SDK gaps recorded per extension (terminal capabilities, hyperlink
+  settings, height-only overlay redraw). PiG core was not changed.

@@ -5,7 +5,9 @@ Independent, optional Go extensions for PiG. Target checkout:
 Namespace: `github.com/jasalt/pig-extensions`. New work is MIT;
 [third-party notices](docs/provenance.md) remain applicable.
 
-This collection is **in progress**, not the completed six-extension port.
+All six priority extensions are implemented and tested against the real host.
+BTW is not ported (substrate proven), and `extension-toggle` is intentionally
+excluded. Open items are listed in [validation](docs/validation.md#remaining-scope).
 
 | Extension | Current state |
 | --- | --- |
@@ -15,7 +17,7 @@ This collection is **in progress**, not the completed six-extension port.
 | [pins](extensions/pins/README.md) | Implemented; unit/race, real-host RPC command/state and interactive PTY browser tests |
 | [imgview](extensions/imgview/README.md) | Implemented; unit/race, real-host RPC command/tool and interactive PTY renderer tests; actual graphics and desktop browser not verified |
 | [schedule](extensions/schedule/README.md) | Implemented; unit/race and real-host privilege/queued-tier/shell/trust/tool tests. Startup-wave substitute needs your acceptance |
-| btw | Conditional Go feasibility review after the six priority ports |
+| btw | Not ported. Child-session substrate proven ([feasibility](docs/feasibility.md#btw--child-session-substrate-proven-port-not-started)); overlay/UI work remains |
 
 ## Select exactly what you need
 

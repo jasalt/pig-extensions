@@ -44,23 +44,55 @@ therefore also needs an approved target/version update. Alternatively, explicitl
 defer the scheduler runtime while its pure schedule/policy/store logic is ported.
 No Node fallback, confirmation gate or automatic scope reduction is proposed.
 
-## Pins / imgview — probe still required
+## Pins / imgview — resolved for the shipped extensions
 
-The shared host wire includes resolved terminal capabilities, but Go SDK
-`Extension.handleNotify(state_update)` currently retains model, session, HasUI
-and theme, not that capability payload. The Node runtime does propagate it.
-This does not by itself prove the Go rendering route impossible: public native
-Markdown/Image packages and host image-result normalization still need scoped
-production-path probes. Do not infer parent capabilities from a child process
-TTY or implement a competing renderer/protocol to hide a gap.
+The Go SDK still drops the host's resolved terminal capabilities from
+`state_update`, and PiG's public `tui.HighlightCode`/hyperlink rendering read
+process globals. The shipped extensions handle this as follows (see each
+README and `docs/validation.md`):
 
-No pin browser geometry, Markdown/theme/focus path, slash-image renderer,
-Kitty/iTerm2 graphics or desktop opener has been accepted yet. Ordinary text
-PTY output and `HasUI` in RPC are not sufficient evidence.
+- pins highlights code with a per-instance copy of PiG's lexer mapping fed by
+  the host theme snapshot (PTY-proven with a custom keyword color).
+  Hyperlinks follow the extension process's capability detection, and a
+  height-only resize is not redrawn: both recorded SDK gaps.
+- imgview's tool images are host-rendered. Slash-command images use the
+  public `tui.Image`, which in subprocess placement detects capabilities from
+  the inherited environment (PTY-proven Kitty bytes and native fallback) and
+  shares the host's state when fused.
 
-## BTW — conditional after priority ports
+Actual graphics on a physical terminal and a real desktop browser launch
+remain unverified.
 
-No child-session design or implementation has yet qualified. Preserve the Go
-preference, original v0.7.1 modes/tool restrictions and no child-extension loading.
-Use a real public child-agent/session substrate or explicitly defer; never replace
-it with a one-shot completion or a second provider loop.
+## BTW — child-session substrate proven; port not started
+
+`test/fixtures/btw-child-session-probe` (run
+`python3 -m test.integration.btw_child_probe`) shows that a Go extension
+command can run a child agent turn through PiG's public `coding` SDK
+(`NewServices` → `NewRuntime` → `BuildModel(ctx.ModelQualified())` →
+`Runtime.New` with an in-memory session). Against the reviewed binary and a
+scripted local model:
+
+- the child resolved the parent's model and credentials from the selected
+  agent directory;
+- its request carried only its own system prompt and question (no parent
+  history);
+- its tools were exactly `read`, `grep`, `find`, `ls`
+  (`ActiveBuiltinTools`); no extensions were loaded in the child runtime;
+- cancellation follows the command's context.
+
+This is the substrate the plan requires, using PiG's own agent loop rather
+than a second provider loop. It does **not** qualify a BTW port. Remaining
+work for pi-btw v0.7.1 (~3,100 TypeScript lines):
+
+- contextual mode (seeding the parent branch), tangent and read-only modes,
+  `/side`, `--save`, follow-up injection, tool-free summarization;
+- hidden branch-local threads;
+- a floating overlay that streams output and switches focus while the
+  parent keeps working. The SDK overlay is single, line-based, and does
+  not redraw on height-only changes (see the pins evidence);
+- credential concurrency: in subprocess placement the child reads and may
+  refresh OAuth credentials from the same agent directory as the host.
+  Concurrent refreshes need qualification before relying on rotating tokens.
+
+Recommendation: implement BTW as its own milestone with an overlay
+qualification step first.
