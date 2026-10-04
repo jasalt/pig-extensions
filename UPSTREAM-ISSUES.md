@@ -35,20 +35,20 @@ pig-send-during-compaction: NOT REPRODUCED — extension saw: ['sendUserMessage 
 pig-followup-event-order: OBSERVED — ['before_agent_start:ONE', 'message_start:ONE', 'message_start:TWO', 'agent_settled']
 ```
 
-| # | Upstream | Issue | Severity | On main `e8cc487` |
-| --- | --- | --- | --- | --- |
-| 1 | PiG | Extension `exec` timeout leaves the process tree and blocks until descendants exit | High | Present |
-| 2 | PiG | Go SDK cannot see the host's resolved terminal capabilities | Medium | Present |
-| 3 | PiG | Go SDK overlays are not re-rendered on a height-only resize | Low | Present |
-| 4 | PiG | Piglet JSON Schema rejects `build.extensionRealization` | Low | Present |
-| 5 | PiG | Non-git `PIG_SOURCE_ROOT` fails with `exit status 128` | Low | Present |
-| 6 | PiG | Extension `ctx.Compact()` is a silent no-op in RPC/print mode | Medium | Fixed |
-| 7 | PiG | No public highlighter that takes a theme | Low | Fixed |
-| 8 | pungggi/pi-schedule | Queued scheduled turns run with a later job's privilege tier | High (security) | n/a |
-| 9 | pungggi/pi-schedule | Stale run completion resurrects cancelled jobs and undoes disables | Medium | n/a |
-| 10 | pungggi/pi-schedule | Skill promises "no prior conversation" | Low (docs) | n/a |
-| 11 | gregjohnso/pi-imgview | Missing browser opener: false success and an unhandled spawn error | Medium | n/a |
-| 12 | s4lv0/pi-pins | `/pin list` documented but missing; `/pin help` opens the browser | Low | n/a |
+| #  | Upstream              | Issue                                                                              | Severity        | On main `e8cc487` |
+|----|-----------------------|------------------------------------------------------------------------------------|-----------------|-------------------|
+| 1  | PiG                   | Extension `exec` timeout leaves the process tree and blocks until descendants exit | High            | Present           |
+| 2  | PiG                   | Go SDK cannot see the host's resolved terminal capabilities                        | Medium          | Present           |
+| 3  | PiG                   | Go SDK overlays are not re-rendered on a height-only resize                        | Low             | Present           |
+| 4  | PiG                   | Piglet JSON Schema rejects `build.extensionRealization`                            | Low             | Present           |
+| 5  | PiG                   | Non-git `PIG_SOURCE_ROOT` fails with `exit status 128`                             | Low             | Present           |
+| 6  | PiG                   | Extension `ctx.Compact()` is a silent no-op in RPC/print mode                      | Medium          | Fixed             |
+| 7  | PiG                   | No public highlighter that takes a theme                                           | Low             | Fixed             |
+| 8  | pungggi/pi-schedule   | Queued scheduled turns run with a later job's privilege tier                       | High (security) | n/a               |
+| 9  | pungggi/pi-schedule   | Stale run completion resurrects cancelled jobs and undoes disables                 | Medium          | n/a               |
+| 10 | pungggi/pi-schedule   | Skill promises "no prior conversation"                                             | Low (docs)      | n/a               |
+| 11 | gregjohnso/pi-imgview | Missing browser opener: false success and an unhandled spawn error                 | Medium          | n/a               |
+| 12 | s4lv0/pi-pins         | `/pin list` documented but missing; `/pin help` opens the browser                  | Low             | n/a               |
 
 ---
 
