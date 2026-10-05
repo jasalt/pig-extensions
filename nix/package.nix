@@ -10,12 +10,12 @@
   procps,
   pigSource ? fetchgit {
     url = "https://github.com/MichaelKinsy/PiG.git";
-    rev = "0e6ed0048282a15531ea1652a5833de4da4dd1a7";
-    hash = "sha256-j3nk6kSst6/jbZVFe0gsTMk9D4f1BOv4QCNqslIVA28=";
+    rev = "6f1441ef4882e30b0681cb6119bd12474e41fd9c";
+    hash = "sha256-VRXkSL+ex3bHZwa291kSIRjGXaaWamUp3/sk6KHwpYM=";
     # PiG records the revision and enumerates source files using Git.
     leaveDotGit = true;
   },
-  dependencyHash ? "sha256-aqEH0dakggKBNxCtLJxl3OiljA4OanducxZFj/pfoFg=",
+  dependencyHash ? "sha256-tfyURHy9wnbpbXqb0xEk3w1HRBX6Beh/0xhz1v8dMMo=",
 }:
 let
   source = lib.fileset.toSource {
