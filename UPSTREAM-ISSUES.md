@@ -52,7 +52,26 @@ pig-followup-event-order: OBSERVED — ['before_agent_start:ONE', 'message_start
 
 ---
 
+## Related GitHub issues and pull requests
+
+Reviewed open and closed issue/PR titles and bodies in [MichaelKinsy/PiG](https://github.com/MichaelKinsy/PiG), plus closure comments for PRs #116 and #122. No exact duplicate was found for reports 1–5 below. These references describe related work, not evidence that the remaining defects are fixed. Statuses reflect that review and can change.
+
+| Local report | Related upstream work | Scope and status at review |
+|---|---|---|
+| 1 — Exec timeout/process tree | [PR #143](https://github.com/MichaelKinsy/PiG/pull/143); [PR #149](https://github.com/MichaelKinsy/PiG/pull/149) | #143 is merged and kills extension processes before a dead-terminal emergency exit. #149 is open and addresses Windows bash output draining and process containment. Neither specifically addresses extension `Exec` timeout cancellation. |
+| 2 — Terminal capabilities | [PR #40](https://github.com/MichaelKinsy/PiG/pull/40) | Merged. Propagates host-resolved capabilities into the Node runtime; useful precedent for the missing Go SDK equivalent. |
+| 3 — Height-only overlay resize | [Issue #115](https://github.com/MichaelKinsy/PiG/issues/115), [PR #116](https://github.com/MichaelKinsy/PiG/pull/116); [issue #121](https://github.com/MichaelKinsy/PiG/issues/121), [PR #122](https://github.com/MichaelKinsy/PiG/pull/122) | Covers missing terminal height after reload and disappearing fullscreen widgets/footer. Maintainer comments confirm both PRs were incorporated into 0.4.0 through [PR #114](https://github.com/MichaelKinsy/PiG/pull/114), rather than merged directly. #115 remains open; #121 is closed. These are distinct from Go overlay invalidation on height-only changes. |
+| 4 — Piglet schema mismatch | No specific match found | Candidate for a separate report. |
+| 5 — Non-git source-root error | No specific match found | Candidate for a separate report. |
+| 7 — Theme-aware highlighter (historical) | [PR #43](https://github.com/MichaelKinsy/PiG/pull/43) | Merged. Includes theme-aware highlighting in the Node extension runtime, not specifically the Go public highlighter change. |
+
+Recheck current upstream main before filing. The GitHub references do not replace the pinned source review and runtime evidence below.
+
+---
+
 ## 1. PiG: extension `exec` timeout leaves the process tree and blocks until descendants exit
+
+Filed as https://github.com/MichaelKinsy/PiG/issues/154
 
 **Repro:** [`upstream-repros/pig-exec-timeout-process-tree`](upstream-repros/pig-exec-timeout-process-tree/)
 
@@ -63,28 +82,78 @@ res, _ := ctx.ExecWithOptions("bash", []string{"-c", "sleep 8 & echo $! > " + pi
 ctx.Notify(fmt.Sprintf("elapsed=%.1fs killed=%t code=%d", time.Since(start).Seconds(), res.Killed, res.ExitCode), "info")
 ```
 
-**Expected:** the call returns after about 1 s with `killed=true`, and the
-command's process group (including the background `sleep`) is terminated.
+**Expected** (Pi 1.0.0, the version PiG main pins): the call returns after
+about 1.1 s with `killed=true` and `code=0`. Pi sends SIGTERM to `bash`
+only, so the background `sleep` keeps running.
 
 **Actual:** `elapsed=8.0s killed=true code=-1`. Only `bash` is killed. The
 call returns only when the background child exits on its own and closes the
 inherited stdout pipe. With `sleep 600` the call blocks for ten minutes; a
-daemonizing command blocks it indefinitely.
+daemonizing command blocks it indefinitely. The block does not need a
+timeout: a command that exits while a background child holds stdout blocks
+the same way.
+
+Measured with Pi 1.0.0's `core/exec.ts` and `utils/child-process.ts`, run
+unmodified under Node 24 (only `cross-spawn` stubbed), and with PiG's
+`ExecCommand` called directly at `f1320768` (its `exec*.go` files are
+identical to `e8cc487`). Both report `killed=true` for the timeout rows.
+
+| `sh -c …` | Pi 1.0.0 | PiG main |
+|---|---|---|
+| `sleep 12 & echo ok`, no timeout | 0.11 s, code 0 | 12 s, code 0 |
+| `sleep 12 & wait`, timeout 1000 | 1.11 s, code 0; child keeps running | 12 s, code -1 |
+| `trap 'echo cleanup; exit 0' TERM; sleep 12 & wait`, timeout 1000 | 1.11 s, code 0, prints `cleanup` | 12 s, code -1, no output |
 
 **Cause** (`coding/extension/exec.go`, unchanged on main):
 
+- Pi's `execCommand` waits with `waitForChildProcess`. After the child's
+  `exit` event, it finishes when both output pipes end, or when no data has
+  arrived for `EXIT_STDIO_GRACE_MS` (100 ms, re-armed on each chunk). PiG
+  calls `cmd.Wait()`, which waits for every holder of the output pipes. PiG
+  ports this wait for the bash tool
+  (`internal/codingagent/tools/bash_operations.go`, `waitForStdioIdle`) but
+  not for `exec`.
+- Pi cancels with `proc.kill("SIGTERM")`. PiG's `cmd.Cancel` calls
+  `cmd.Process.Kill()`, which sends SIGKILL, so a TERM handler never runs.
+- Pi resolves with `code ?? 0`, so a child killed by a signal reports 0.
+  PiG reports `ExitCode()`, which is -1.
+- The doc comment promises "SIGTERM followed by SIGKILL after 5 seconds", as
+  Pi's code comment does. Pi sends SIGKILL only `if (!proc.killed)`, and
+  Node sets `killed` once SIGTERM is delivered, so Pi never escalates: with
+  `trap '' TERM; sleep 12` and a 1 s timeout, Pi returns after 12 s.
 - The child is started with `Setpgid: true` (`exec_unix.go:10`), and the
-  comment says this is "so a timeout/cancel can target the whole tree", but
-  `cmd.Cancel` calls `cmd.Process.Kill()`, which signals the leader PID only.
-- The doc comment promises "SIGTERM followed by SIGKILL after 5 seconds";
-  the implementation sends SIGKILL immediately.
-- No `cmd.WaitDelay` is set, so `cmd.Wait()` waits for every holder of the
-  output pipes.
+  comment says this is "so a timeout/cancel can target the whole tree". Pi
+  spawns `exec` children in its own process group and never signals
+  descendants.
 
-**Suggested fix:** in `Cancel`, signal the group
-(`syscall.Kill(-pid, SIGTERM)`, then SIGKILL after the grace period) and set
-`WaitDelay` so a stray pipe holder cannot block the call. Windows needs the
-equivalent job-object or tree kill.
+**Suggested fix** (matches Pi, so no divergence entry is needed):
+
+- Move the bash tool's `waitForChildProcess` port into one shared helper,
+  and use it from `ExecCommand` and `bash_operations.go`, as Pi uses one
+  function for both. Read stdout and stderr through separate pipes, re-arm
+  the 100 ms idle timer on data from either, and finish when both reach EOF
+  or the timer fires.
+- On cancel, send SIGTERM to the leader on Unix. On Windows, call
+  `Process.Kill`; Node's `kill("SIGTERM")` terminates the process
+  forcefully there. Do not escalate to SIGKILL or signal the process group.
+- Take the code from `cmd.ProcessState` whenever the child ran, and report a
+  child killed by a signal as code 0. `Wait` returns `ctx.Err()` when a TERM
+  handler exits 0, so keep the `ctx.Err()` result branch only for a `Start`
+  failure.
+- Add regression tests that fail on main for the three table rows and for
+  output written after the leader exits (earendil-works/pi#5303). Each test
+  kills the surviving background child in `t.Cleanup`.
+
+Do not use `cmd.WaitDelay` as the grace. It is a fixed deadline, not an idle
+timer, and it also applies to normal exits. When it expires, `Wait` returns
+`exec.ErrWaitDelay`, which `ExecCommand` maps to code 1: with
+`WaitDelay = 5s`, `sh -c "sleep 12 & echo ok"` returns code 1 after 5 s.
+
+The same wait fixes Windows, because Pi on Windows also kills only the
+leader and relies on the stdio grace. A job object is not needed for parity.
+Killing the process group would be a PiG divergence: an extension that
+starts a daemon through `exec` keeps it under Pi. It would need a numbered,
+approved entry in `docs/parity/DIVERGENCES.md`.
 
 ## 2. PiG: Go SDK cannot see the host's resolved terminal capabilities
 
