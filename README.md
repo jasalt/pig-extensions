@@ -52,6 +52,14 @@ PIG_SOURCE_ROOT=/path/to/PiG-checkout pig piglet build ./piglet.yaml --format bi
 See [docs/in-process.md](docs/in-process.md) for requirements, verification
 and what changes in-process.
 
+### Nix / Home Manager
+
+`nix build .` builds the same recipe with pinned PiG source and Go dependencies;
+no preinstalled PiG or sibling checkout is needed. The result provides `pig` and
+`pig-extensions`. The flake also exports `homeManagerModules.default`.
+See [docs/nix.md](docs/nix.md) for remote builds, Home Manager integration,
+local overrides, and runtime setup.
+
 ## Upstream issues
 
 Problems found in PiG and in the original Pi extensions, each with an

@@ -14,6 +14,12 @@ messages.
 
 ## Build
 
+For a pinned Nix build or Home Manager deployment that fetches everything on a
+fresh machine, see [Nix and Home Manager](nix.md). The manual build below requires
+an existing PiG checkout and toolchain. Always use an **absolute**
+`PIG_SOURCE_ROOT` (for example `$(realpath ../pig-upstream)`): a relative path
+can produce Go's `invalid GOWORK: not an absolute path` error.
+
 All six extensions are fuse-compatible: conventional `Extension()` factories,
 the current SDK module path, and none of the process-global calls PiG's fused
 vet rejects (`os.Exit`, `os.Chdir`, `os.Stdout`, `log.Fatal*`, `fmt.Print*`).

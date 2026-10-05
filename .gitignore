@@ -1,6 +1,10 @@
 __pycache__/
 *.pyc
 
+# Local Nix build links
+/result
+/result-*
+
 # Beads / Dolt files (added by bd init)
 .dolt/
 *.db
