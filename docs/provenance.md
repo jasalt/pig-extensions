@@ -133,5 +133,36 @@ fresh-row and reservation decisions; no kmet code was copied.
 
 Differences are listed in `extensions/schedule/README.md`.
 
+## session-migrate
+
+Go/PiG-targeted adaptation of `xhluca/session-migrate`, commit
+`c23b1dbd21404f78be3b69d42ff4fb158ff52105`. MIT, copyright 2026 xhluca;
+license retained verbatim at `extensions/session-migrate/LICENSE`.
+New Go work: copyright 2026 Jarkko Saltiola, MIT.
+
+| Consulted/copied upstream file | SHA-256 |
+| --- | --- |
+| `src/session_migrate/formats/claude.py` | `b914060468f8afd79500b12fd5f53da256190369af356e5dd015f2a226a8613f` |
+| `src/session_migrate/formats/pi.py` | `d9fd3e1807a444f5818f40004f1994e6dbe2b9701f39a2c0c877ada486218f6c` |
+| `LICENSE` | `f44a6129dfbf3f2bf68e333d33489361a2113ebe2804e5852eb39adcf58bd35b` |
+| `tests/native_corpus/v1/sources/claude/2.1.209/portable-rich/native/73fea258-9467-4a17-877b-ef6bcd0898b7.jsonl` | `9103243215e8cfb960495d2e0097c2c6d5787fe6dc93e2166fad7c7ebe827c3c` |
+| Same fixture's `provenance.json` | `92308721671f99ae2486df90be6db2ce12be6fbe68f12caeb6d02db067a2d3b3` |
+
+The native transcript and provenance are copied unchanged into
+`extensions/session-migrate/testdata/claude-native{.jsonl,.provenance.json}`.
+Upstream describes this as an exact-client native trajectory, sanitized and
+reloaded by Claude Code 2.1.209. We independently verify import and continuation
+in PiG, not the upstream capture itself. Graph selection, preserved-compaction
+back-edge recognition, omission rules, and Pi v3 self-anchored compaction behavior
+are adapted; Python source is not executed or bundled.
+
+Differences: **Claude → PiG only**, rather than the upstream 18×18 matrix; a Go
+extension command rather than Python CLI/catalog/export. Use host-selected target
+session directory/cwd, strict malformed/orphan/unresolved tool rejection instead
+of ID repair, bounded reads, cancellation and no-replace private-file publication.
+Only embedded data images move; private reasoning/configuration never moves.
+The content-free manifest carries counts/source hash/initial-target hash. Full
+behavior and exclusions: `extensions/session-migrate/README.md`.
+
 This inventory covers implemented modules only. The prospective source inventory
 in `plan.md` is not license clearance for unimplemented ports.

@@ -1,4 +1,4 @@
-# Optional Piglet that compiles all six extensions into one PiG executable,
+# Optional Piglet that compiles the selected extensions into one PiG executable,
 # running them in-process (fused) instead of as extension subprocesses.
 # See docs/in-process.md. Remove entries you do not want: the scheduler and
 # notifier are active whenever they are included.
@@ -19,6 +19,8 @@ extensions:
     origins: [local:./extensions/pins]
   - name: schedule
     origins: [local:./extensions/schedule]
+  - name: session-migrate
+    origins: [local:./extensions/session-migrate]
 build:
   # Fail the build instead of falling back to a subprocess for any member.
   extensionRealization: fused

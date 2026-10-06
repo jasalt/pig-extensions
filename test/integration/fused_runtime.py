@@ -10,7 +10,7 @@ import tempfile
 
 from .rpc import BIN, RPC
 
-EXPECTED_COMMANDS = {"savelast", "notify-human-test", "codex-usage", "codex-reset", "imgcat", "imgshow", "imgboth", "pin"}
+EXPECTED_COMMANDS = {"savelast", "notify-human-test", "codex-usage", "codex-reset", "imgcat", "imgshow", "imgboth", "pin", "session-migrate"}
 EXPECTED_TOOLS = {"notify_human", "show_image", "schedule"}
 
 

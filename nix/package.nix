@@ -36,6 +36,9 @@ let
       ../test/integration/fused_runtime.py
       ../test/integration/savelast.py
       ../test/integration/pins_rpc.py
+      ../test/integration/session_migrate.py
+      ../test/integration/scripted_provider.py
+      ../extensions/session-migrate/testdata
     ];
   };
   # A fixed-output fetch phase has network access. The actual compiler phase
@@ -124,11 +127,12 @@ stdenvNoCC.mkDerivation {
     python3 -m test.integration.fused_runtime
     python3 -m test.integration.savelast
     python3 -m test.integration.pins_rpc
+    python3 -m test.integration.session_migrate
     runHook postInstallCheck
   '';
   passthru = { inherit modules pigSource; };
   meta = {
-    description = "PiG with six extensions fused from piglet.yaml";
+    description = "PiG with optional Go extensions fused from piglet.yaml";
     homepage = "https://github.com/jasalt/pig-extensions";
     license = [
       lib.licenses.mit

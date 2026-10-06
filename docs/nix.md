@@ -2,7 +2,7 @@
 
 The flake packages the root `piglet.yaml` as a **fused Piglet Binary** on
 `x86_64-linux`. It installs `pig-extensions` and a `pig` symlink to that binary.
-All six recipe members are compiled in. It does not install extension source
+All recipe members are compiled in. It does not install extension source
 into your PiG settings, change credentials, migrate state, or run an agent
 session during Home Manager activation.
 

@@ -5,6 +5,14 @@ binary `../PiG/bin/pig`, version `0.3.1+0.87.1`. No PiG core modifications.
 Tests use temporary homes, selected agent directories, cwd roots and sessions.
 They never send real notifications, call real providers, or redeem credits.
 
+## session-migrate
+
+[Dedicated validation evidence](session-migrate-validation.md): native-produced
+Claude Code 2.1.209 import, host switching, hermetic continuation, reopen and
+compaction/malformed-input behavior pass against pinned PiG in subprocess and
+seven-member fused placement. The Nix fused build/install checks also pass.
+Only Claude → PiG is implemented; no full upstream adapter-matrix claim.
+
 ## savelast
 
 Passed:

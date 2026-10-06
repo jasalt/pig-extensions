@@ -20,7 +20,7 @@ an existing PiG checkout and toolchain. Always use an **absolute**
 `PIG_SOURCE_ROOT` (for example `$(realpath ../pig-upstream)`): a relative path
 can produce Go's `invalid GOWORK: not an absolute path` error.
 
-All six extensions are fuse-compatible: conventional `Extension()` factories,
+All recipe extensions are fuse-compatible: conventional `Extension()` factories,
 the current SDK module path, and none of the process-global calls PiG's fused
 vet rejects (`os.Exit`, `os.Chdir`, `os.Stdout`, `log.Fatal*`, `fmt.Print*`).
 `piglet.yaml` sets `build.extensionRealization: fused`, so the build fails
@@ -42,7 +42,7 @@ PIG_SOURCE_ROOT=/tmp/pig-src pig piglet build ./piglet.yaml --format binary --ou
 pig piglet show pig-extensions      # components: extension/<name>  fused  binary
 ```
 
-Run the result like `pig`; the six extensions are always active in it:
+Run the result like `pig`; the recipe extensions are always active in it:
 
 ```sh
 ./pig-extensions
@@ -55,6 +55,12 @@ pins its components: rebuild to pick up extension changes, and use stock
 `pig -e ...` with `/reload` while developing.
 
 ## Verified
+
+The added seventh member, `session-migrate`, is verified with all seven fused
+against the same pinned checkout, including import and provider continuation.
+See [migration evidence](session-migrate-validation.md). The six-member evidence
+below is the earlier priority-extension qualification, not a claim that every
+historical suite was rerun after adding the importer.
 
 Against PiG `0e6ed00` (0.3.1), Linux amd64:
 

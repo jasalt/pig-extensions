@@ -6,6 +6,8 @@ Namespace: `github.com/jasalt/pig-extensions`. New work is MIT;
 [third-party notices](docs/provenance.md) remain applicable.
 
 All six priority extensions are implemented and tested against the real host.
+An additional [session-migrate](extensions/session-migrate/README.md) Go extension
+imports Claude Code sessions into PiG; subprocess and fused continuation are verified.
 BTW is not ported (substrate proven), and `extension-toggle` is intentionally
 excluded. Open items are listed in [validation](docs/validation.md#remaining-scope).
 
@@ -17,6 +19,7 @@ excluded. Open items are listed in [validation](docs/validation.md#remaining-sco
 | [pins](extensions/pins/README.md) | Implemented; unit/race, real-host RPC command/state and interactive PTY browser tests |
 | [imgview](extensions/imgview/README.md) | Implemented; unit/race, real-host RPC command/tool and interactive PTY renderer tests; actual graphics and desktop browser not verified |
 | [schedule](extensions/schedule/README.md) | Implemented; unit/race and real-host privilege/queued-tier/shell/trust/tool tests. Startup-wave substitute needs your acceptance |
+| [session-migrate](extensions/session-migrate/README.md) | Claude → PiG importer; unit/race, native-produced Claude fixture, real-host import/reopen/continuation and fused tests |
 | btw | Not ported. Child-session substrate proven ([feasibility](docs/feasibility.md#btw--child-session-substrate-proven-port-not-started)); overlay/UI work remains |
 
 ## Select exactly what you need
@@ -42,7 +45,7 @@ there is deliberately no `extension-toggle` port or new settings plane.
 
 ## Run them in-process
 
-Stock `pig` runs Go extensions as subprocesses. To run all six inside PiG's
+Stock `pig` runs Go extensions as subprocesses. To run all seven inside PiG's
 own process, build a fused Piglet Binary from [`piglet.yaml`](piglet.yaml):
 
 ```sh
