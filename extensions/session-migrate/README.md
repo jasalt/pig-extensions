@@ -41,7 +41,12 @@ path. Import never invokes a model or executes recorded tools.
 
 - Select the active UUID ancestry (latest `last-prompt.leafUuid`, otherwise last
   eligible conversation record); do not flatten forks or subagents. Graph order
-  handles tool-result children physically appended before their parents.
+  handles tool-result children physically appended before their parents. Recover
+  uniquely matched result-only children outside that ancestry only when both
+  `parentUuid` and `sourceToolAssistantUUID` point to the selected call's assistant
+  record and the nonempty session ID matches. Insert them after that assistant;
+  do not recover sibling text, sidechains, metadata, or already-resolved calls.
+  Ambiguous eligible results fail rather than choosing a sibling.
 - Preserve user/assistant text, tool-call names/IDs/object arguments and ordered
   tool results including `isError`. Tool names are historical: they are not
   remapped to PiG tools or installed as capabilities.

@@ -119,10 +119,35 @@ def run():
                 sent = json.dumps(provider.snapshot()[-1]["messages"])
                 assert "PORTABLE_COMPACTION_SUMMARY" in sent and "POST_COMPACTION_TURN" in sent, sent
                 assert "PRE_COMPACTION_PRIVATE" not in sent, "pre-compaction history replayed"
+
+                detached = cwd / "detached-result.jsonl"
+                detached.write_text("".join(json.dumps(r) + "\n" for r in [
+                    dict(type="user", uuid="u", sessionId="synthetic", message=dict(role="user", content="Read a fixture")),
+                    dict(type="assistant", uuid="a", parentUuid="u", sessionId="synthetic",
+                         message=dict(role="assistant", content=[dict(type="tool_use", id="call", name="Read", input={})])),
+                    dict(type="user", uuid="r", parentUuid="a", sourceToolAssistantUUID="a", sessionId="synthetic",
+                         message=dict(role="user", content=[dict(type="tool_result", tool_use_id="call", content="DETACHED_RESULT_MARKER")])),
+                    dict(type="assistant", uuid="next", parentUuid="a", sessionId="synthetic",
+                         message=dict(role="assistant", content="Continued from assistant, not result")),
+                    dict(type="last-prompt", leafUuid="next"),
+                ]))
+                detached_hash = hashlib.sha256(detached.read_bytes()).hexdigest()
+                _, seen = rpc.call("prompt", message=f"/session-migrate import claude {detached}")
+                note(rpc, seen, "Saved imported session: ")
+                messages, _ = rpc.call("get_messages")
+                assert [m["role"] for m in messages["data"]["messages"]] == ["user", "assistant", "toolResult", "assistant"]
+                cursor = len(rpc.events)
+                rpc.call("prompt", message="Continue after detached tool result recovery.")
+                rpc.wait_event("agent_end", since=cursor)
+                rpc.call("get_state")
+                sent = provider.snapshot()[-1]["messages"]
+                assert len([m for m in sent if m["role"] == "tool"]) == 1, sent
+                assert "DETACHED_RESULT_MARKER" in json.dumps(sent), sent
+                assert hashlib.sha256(detached.read_bytes()).hexdigest() == detached_hash
         assert hashlib.sha256(source.read_bytes()).hexdigest() == before, "source modified"
         for path in session_dir.glob("*.jsonl*"):
             assert path.stat().st_mode & 0o777 == 0o600, path
-    print("PASS Claude native fixture → PiG: inspect/import/switch/title/tools/image/manifest/continuation/reopen/save/malformed-refusal/compaction/source unchanged")
+    print("PASS Claude native fixture → PiG: inspect/import/switch/title/tools/image/manifest/continuation/reopen/save/malformed-refusal/compaction/detached-result/source unchanged")
 
 
 if __name__ == "__main__":

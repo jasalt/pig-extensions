@@ -62,11 +62,29 @@ ordered result text/images, private-thinking/document/image omissions, title
 precedence, malformed UTF-8/JSON, cancellation, size bounds, failed publication,
 source UUID resolution ambiguity, independent identities and non-overwrite.
 
+## Detached tool-result recovery follow-up
+
+The importer now recovers unique result-only children explicitly linked by both
+`parentUuid` and `sourceToolAssistantUUID` to an active assistant call, with a
+matching nonempty session ID. Synthetic unit/race tests cover recovery, physical
+child-before-parent order, multiple results, ambiguity, already-resolved calls,
+inactive calls, wrong/missing linkage and identity, sidechains, metadata, compact
+summaries and sibling text. The real-host integration additionally imports a
+synthetic detached result, checks native message order, and confirms the result
+reaches the local dummy provider on continuation without changing the source.
+
+At the operator's request, a read-only invocation of the updated parser inspected
+the private Claude session `3e90eaee-c0c2-42ec-be19-eabfe8b4f3c9`: 2,006 records,
+1,324 selected records, 266 tool calls and 266 tool results (22 results recovered).
+Only content-free counts/hash were emitted; no session was written or switched,
+no historical tools ran, and no vendor request was made. This is parser evidence,
+not a claim of real-host import or continuation of that private transcript.
+
 ## Remaining scope
 
 Other source harnesses, exports and upstream catalog are not implemented.
-Interactive TUI presentation, actual terminal graphics, a user-private Claude
-transcript and vendor-backed continuation are not claimed. No credentials,
+Interactive TUI presentation, actual terminal graphics, real-host import of a
+user-private Claude transcript and vendor-backed continuation are not claimed. No credentials,
 alerts, account resets or PiG core modifications were involved. Source historical
 tool names are not mapped to the current executable tool set. Save/import require
 host session persistence; only inspection is supported with `--no-session`.

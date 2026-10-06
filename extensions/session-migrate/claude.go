@@ -105,6 +105,10 @@ func ReadClaude(ctx context.Context, path string) (*Transcript, error) {
 	if err != nil {
 		return nil, err
 	}
+	selected, err = recoverToolResults(records, selected)
+	if err != nil {
+		return nil, err
+	}
 	s := &Transcript{Report: Report{SourceFormat: "claude", SourceSHA256: hex.EncodeToString(h.Sum(nil)), Records: len(records), SelectedRecords: len(selected), Preserved: map[string]int{}, Omitted: map[string]int{}}}
 	selectedSet := map[objectKey]bool{}
 	for _, i := range selected {
@@ -289,6 +293,91 @@ func ReadClaude(ctx context.Context, path string) (*Transcript, error) {
 		}
 	}
 	return s, nil
+}
+
+// recoverToolResults includes result-only children skipped by the active ancestry.
+// Claude can continue from an assistant record rather than its result child. Only
+// explicit, same-session links to selected calls qualify; never flatten a fork,
+// import sibling conversation text, or synthesize a result.
+func recoverToolResults(records []object, selected []int) ([]int, error) {
+	selectedSet := map[int]bool{}
+	owners := map[string]int{}
+	resolved := map[string]bool{}
+	for _, i := range selected {
+		selectedSet[i] = true
+		row := records[i]
+		if row["isMeta"] == true || row["isSidechain"] == true {
+			continue
+		}
+		blocks, _ := obj(row["message"])["content"].([]any)
+		for _, value := range blocks {
+			b := obj(value)
+			if row["type"] == "assistant" && b["type"] == "tool_use" {
+				owners[str(b["id"])] = i
+			}
+			if row["type"] == "user" && b["type"] == "tool_result" {
+				resolved[str(b["tool_use_id"])] = true
+			}
+		}
+	}
+	candidates := map[string][]int{}
+	for i, row := range records {
+		if selectedSet[i] || row["type"] != "user" || row["isMeta"] == true || row["isSidechain"] == true || row["isCompactSummary"] == true || str(row["uuid"]) == "" {
+			continue
+		}
+		message := obj(row["message"])
+		if role := str(message["role"]); role != "" && role != "user" {
+			continue
+		}
+		blocks, ok := message["content"].([]any)
+		if !ok || len(blocks) == 0 {
+			continue
+		}
+		eligible := true
+		for _, value := range blocks {
+			b := obj(value)
+			id := str(b["tool_use_id"])
+			owner, exists := owners[id]
+			if b["type"] != "tool_result" || id == "" || !exists || resolved[id] {
+				eligible = false
+				break
+			}
+			call := records[owner]
+			if str(call["sessionId"]) == "" || row["sessionId"] != call["sessionId"] || row["parentUuid"] != call["uuid"] || row["sourceToolAssistantUUID"] != call["uuid"] {
+				eligible = false
+				break
+			}
+		}
+		if eligible {
+			for _, value := range blocks {
+				id := str(obj(value)["tool_use_id"])
+				candidates[id] = append(candidates[id], i)
+			}
+		}
+	}
+	children := map[int][]int{}
+	added := map[int]bool{}
+	// Source order only orders explicitly linked siblings, not conversation forks.
+	for i, row := range records {
+		blocks, _ := obj(row["message"])["content"].([]any)
+		for _, value := range blocks {
+			id := str(obj(value)["tool_use_id"])
+			matches := candidates[id]
+			if len(matches) > 1 {
+				return nil, fmt.Errorf("ambiguous Claude tool result children")
+			}
+			if len(matches) == 1 && matches[0] == i && !added[i] {
+				children[owners[id]] = append(children[owners[id]], i)
+				added[i] = true
+			}
+		}
+	}
+	out := make([]int, 0, len(selected)+len(added))
+	for _, i := range selected {
+		out = append(out, i)
+		out = append(out, children[i]...)
+	}
+	return out, nil
 }
 
 type objectKey int
