@@ -11,9 +11,26 @@
   pigSource ? fetchgit {
     url = "https://github.com/MichaelKinsy/PiG.git";
     rev = "6f1441ef4882e30b0681cb6119bd12474e41fd9c";
-    hash = "sha256-VRXkSL+ex3bHZwa291kSIRjGXaaWamUp3/sk6KHwpYM=";
-    # PiG records the revision and enumerates source files using Git.
+    hash = "sha256-eWWVRYDhjDeOOScigfej0OTsR1cwYp9i1QMpX1L3jAU=";
+    # PiG needs the real revision and Git file enumeration. Retained metadata
+    # includes server-dependent pack encoding and mutable remote refs/tags.
+    # Keep only the pinned commit/tree and repack without reusing fetched data.
     leaveDotGit = true;
+    postFetch = ''
+      cd "$out"
+      revision=$(git rev-parse HEAD)
+      printf '%s\n' "$revision" > .git/HEAD
+      rm -rf .git/refs .git/packed-refs
+      mkdir -p .git/refs
+      printf '%s\n' "$revision" > .git/shallow
+      mkdir -p .pinned-git/objects/pack .pinned-git/refs
+      printf '%s\n' "$revision" | git pack-objects --revs --threads=1 \
+        --no-reuse-delta --no-reuse-object "$out/.pinned-git/objects/pack/pack"
+      printf '%s\n' "$revision" > .pinned-git/HEAD
+      printf '%s\n' "$revision" > .pinned-git/shallow
+      rm -rf .git
+      mv .pinned-git .git
+    '';
   },
   dependencyHash ? "sha256-tfyURHy9wnbpbXqb0xEk3w1HRBX6Beh/0xhz1v8dMMo=",
 }:

@@ -32,8 +32,12 @@ No `--impure`, sandbox disabling, or networked activation script is needed.
 Builds may take several minutes and substantial disk space. The package uses
 Go 1.27.1; extension language floors remain Go 1.26 and SDK requirements remain
 v0.3.1. Source/module pins are in `nix/package.nix`; nixpkgs is in `flake.lock`.
-PiG Git metadata is retained by `fetchgit` because its builder records the
-actual source revision. No upstream source patches or synthetic commits are used.
+PiG Git metadata is retained because its builder records the actual source
+revision. After `fetchgit`, packaging keeps a shallow, detached repository with
+only the original pinned commit and its tree, repacked without object reuse.
+Remote refs, tags, and fetch metadata are discarded. GitHub's pack encoding and
+remote refs can change even when the source revision does not. No upstream
+source patches or synthetic commits are used.
 
 ## Home Manager: recommended module
 
@@ -169,7 +173,25 @@ process behavior and [validation.md](validation.md) for broader qualification.
 License/provenance files ship under `share/doc/pig-extensions` and `share/doc/pig`.
 The Nix packaging changes installation/build mechanics, not extension behavior.
 
-### Recorded packaging validation
+### Fresh-fetch regression (current PiG pin)
+
+The original retained-`.git` fetch of PiG
+`6f1441ef4882e30b0681cb6119bd12474e41fd9c` hashed to
+`sha256-VRXkSL+ex3bHZwa291kSIRjGXaaWamUp3/sk6KHwpYM=` locally but
+`sha256-O2kFvC2ElIvKDojA8rRwj2KZRTodS46enPJS452+7H8=` on a fresh fetch.
+Comparison found differences only in `.git/objects` packfiles and their index;
+the checked-out source was unchanged.
+
+The normalized source NAR hash is
+`sha256-eWWVRYDhjDeOOScigfej0OTsR1cwYp9i1QMpX1L3jAU=`. Independent fetches
+with different output names, including one with an injected tag before
+normalization, matched it; normalizing the original cached pack matched too.
+The full package build passed all four install-check
+suites (fused runtime, savelast, pins, and session migration), reporting
+`0.4.0+1.0.0`. `nix flake check` passed. The module proxy hash remains
+`sha256-tfyURHy9wnbpbXqb0xEk3w1HRBX6Beh/0xhz1v8dMMo=`.
+
+### Recorded packaging validation (previous PiG pin)
 
 Validated on Linux x86_64 with Nix 2.34.8 and `sandbox = true`:
 
