@@ -63,6 +63,14 @@ no preinstalled PiG or sibling checkout is needed. The result provides `pig` and
 See [docs/nix.md](docs/nix.md) for remote builds, Home Manager integration,
 local overrides, and runtime setup.
 
+## Release binaries
+
+Pushing a `v*` tag triggers GitHub Actions to build the fused Linux x86-64
+executable through Nix and publish a tar archive, license notices, and SHA-256
+checksum to a GitHub Release. Downloaded binaries do not require Nix or Go.
+See [docs/releases.md](docs/releases.md) for publishing, installation, and
+verification scope.
+
 ## Upstream issues
 
 Problems found in PiG and in the original Pi extensions, each with an

@@ -1,0 +1,45 @@
+name: Release binary
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: cachix/install-nix-action@b85815f71a6de0ddee80b8a80a98d43f4bcc66c7 # v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - name: Build and run package checks
+        run: nix build . --print-build-logs
+      - name: Package and smoke-test standalone binary
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: bash scripts/package-release.sh result "$RELEASE_TAG" dist
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --verify-tag --generate-notes \
+              --title "$RELEASE_TAG"
+          fi
+          gh release upload "$RELEASE_TAG" dist/*.tar.gz dist/*.sha256 --clobber
